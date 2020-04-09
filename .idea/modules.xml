@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/SpaceInvaders.iml" filepath="$PROJECT_DIR$/.idea/SpaceInvaders.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Space.iml" filepath="$PROJECT_DIR$/.idea/Space.iml" />
     </modules>
   </component>
 </project>

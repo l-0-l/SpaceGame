@@ -116,7 +116,11 @@ class Player:
         # Change the picture
 
     def get_current_flame_pic(self):
+        """
+        Returns the current flame pic and changes it for the next time
+        """
         if clock() > self.next_frame:
+            # Make sure we're not randomly getting the same picture
             previous_number = self.current_flame_pic_num
             while previous_number == self.current_flame_pic_num:
                 self.current_flame_pic_num = randint(1, len(self.pic_flame) - 1)
@@ -124,9 +128,15 @@ class Player:
         return self.pic_flame[self.current_flame_pic_num]
 
     def get_xy(self):
+        """
+        Returns the position
+        """
         return self.x, self.y
 
     def draw(self):
+        """
+        Draws itself with the flames
+        """
         self.screen.window.blit(self.get_current_pic(), self.get_xy())
         self.screen.window.blit(self.get_current_flame_pic(),
                                 tuple(map(sum, zip(self.get_xy(), self.left_flame_xy_offset))))

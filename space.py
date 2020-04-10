@@ -61,18 +61,18 @@ class Space(object):
                              pic_move_left=pic_move_left,
                              pic_flame=pic_flame,
                              frame_time=FRAME_TIME)
-        self.missile1 = Missile(player=self.player,
-                                speed=MISSILE_SPEED,
-                                acceleration=MISSILE_ACCELERATION,
-                                pic=pic_missile,
-                                frame_time=FRAME_TIME,
-                                side=Direction.left)
-        self.missile2 = Missile(player=self.player,
-                                speed=MISSILE_SPEED,
-                                acceleration=MISSILE_ACCELERATION,
-                                pic=pic_missile,
-                                frame_time=FRAME_TIME,
-                                side=Direction.right)
+        self.missile_left = Missile(player=self.player,
+                                    speed=MISSILE_SPEED,
+                                    acceleration=MISSILE_ACCELERATION,
+                                    pic=pic_missile,
+                                    frame_time=FRAME_TIME,
+                                    side=Direction.left)
+        self.missile_right = Missile(player=self.player,
+                                     speed=MISSILE_SPEED,
+                                     acceleration=MISSILE_ACCELERATION,
+                                     pic=pic_missile,
+                                     frame_time=FRAME_TIME,
+                                     side=Direction.right)
 
         # Caption and icon
         pygame.display.set_caption("Space")
@@ -99,9 +99,9 @@ class Space(object):
                     if event.key == pygame.K_RIGHT:
                         self.player.set_direction(Direction.right)
                     if event.key == pygame.K_z:
-                        self.missile1.launch()
+                        self.missile_left.launch()
                     if event.key == pygame.K_x:
-                        self.missile2.launch()
+                        self.missile_right.launch()
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_LEFT:
                         # Check the direction change is relevant
@@ -114,19 +114,19 @@ class Space(object):
 
             # Calculate the next player location on the x axis
             self.player.move()
-            self.missile1.move()
-            self.missile2.move()
+            self.missile_left.move()
+            self.missile_right.move()
 
             # A bit of missile logic
-            if self.missile1.is_away():
-                self.missile1.reload()
-            if self.missile2.is_away():
-                self.missile2.reload()
+            if self.missile_left.is_away():
+                self.missile_left.reload()
+            if self.missile_right.is_away():
+                self.missile_right.reload()
 
             # Update the display
             self.screen.window.fill(self.screen.bg_color)
-            self.missile1.draw()
-            self.missile2.draw()
+            self.missile_left.draw()
+            self.missile_right.draw()
             self.player.draw()
             pygame.display.update()
 

@@ -51,7 +51,6 @@ class Player(object):
                     self.frame_time = clock() + 0.1  # TODO: magic number here
         else:
             self.current_pic = 0
-        print(self.current_pic, self.current_speed, self.current_acceleration)
 
         # Calculate the next x axis location
         if 0 < self.x + self.current_speed < self.screen.width - self.width:
@@ -71,9 +70,9 @@ class Player(object):
         elif self.current_acceleration < 0:
             direction = Direction.left
         elif self.current_speed > 0:
-            direction = Direction.right
-        elif self.current_speed < 0:
             direction = Direction.left
+        elif self.current_speed < 0:
+            direction = Direction.right
         else:
             direction = Direction.none
         return direction

@@ -9,16 +9,21 @@ WINDOW_HEIGHT = 600
 BG_COLOR = (0, 128, 128)
 NOMINAL_ACCELERATION = 0.5
 
-move_right = [pygame.image.load("res/spaceship.png"),
+move_right = [pygame.image.load("res/spaceship_N_00.png"),
               pygame.image.load("res/spaceship_R_01.png"),
               pygame.image.load("res/spaceship_R_02.png"),
-              pygame.image.load("res/spaceship_R_03.png")]
+              pygame.image.load("res/spaceship_R_03.png"),
+              pygame.image.load("res/spaceship_R_04.png"),
+              pygame.image.load("res/spaceship_R_05.png"),
+              pygame.image.load("res/spaceship_R_06.png")]
 
-move_left = [pygame.image.load("res/spaceship.png"),
+move_left = [pygame.image.load("res/spaceship_N_00.png"),
              pygame.image.load("res/spaceship_L_01.png"),
              pygame.image.load("res/spaceship_L_02.png"),
-             pygame.image.load("res/spaceship_L_03.png")]
-
+             pygame.image.load("res/spaceship_L_03.png"),
+             pygame.image.load("res/spaceship_L_04.png"),
+             pygame.image.load("res/spaceship_L_05.png"),
+             pygame.image.load("res/spaceship_L_06.png")]
 
 class Space(object):
     def __init__(self):
@@ -36,7 +41,7 @@ class Space(object):
 
         # Caption and icon
         pygame.display.set_caption("Space")
-        pic_logo = pygame.image.load("res/spaceship.png")
+        pic_logo = pygame.image.load("res/spaceship_N_00.png")
         pygame.display.set_icon(pic_logo)
         self.running = True
 

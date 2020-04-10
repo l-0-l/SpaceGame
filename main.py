@@ -21,10 +21,10 @@ class Space(object):
                              y=self.screen.height-self.screen.height/10,
                              screen=self.screen,
                              nominal_acceleration=NOMINAL_ACCELERATION,
-                             pic=pygame.image.load("spaceship.png"))
+                             pic=pygame.image.load("res/spaceship.png"))
         # Caption and icon
         pygame.display.set_caption("Space")
-        pic_logo = pygame.image.load("invader.png")
+        pic_logo = pygame.image.load("res/spaceship.png")
         pygame.display.set_icon(pic_logo)
         self.running = True
 

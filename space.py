@@ -9,6 +9,16 @@ WINDOW_HEIGHT = 600
 BG_COLOR = (0, 128, 128)
 NOMINAL_ACCELERATION = 0.5
 
+move_right = [pygame.image.load("res/spaceship.png"),
+              pygame.image.load("res/spaceship_R_01.png"),
+              pygame.image.load("res/spaceship_R_02.png"),
+              pygame.image.load("res/spaceship_R_03.png")]
+
+move_left = [pygame.image.load("res/spaceship.png"),
+             pygame.image.load("res/spaceship_L_01.png"),
+             pygame.image.load("res/spaceship_L_02.png"),
+             pygame.image.load("res/spaceship_L_03.png")]
+
 
 class Space(object):
     def __init__(self):
@@ -21,7 +31,9 @@ class Space(object):
                              y=self.screen.height-self.screen.height/10,
                              screen=self.screen,
                              nominal_acceleration=NOMINAL_ACCELERATION,
-                             pic=pygame.image.load("res/spaceship.png"))
+                             pic_move_right=move_right,
+                             pic_move_left=move_left)
+
         # Caption and icon
         pygame.display.set_caption("Space")
         pic_logo = pygame.image.load("res/spaceship.png")
@@ -40,19 +52,23 @@ class Space(object):
                 # Respond to keys
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LEFT:
-                        self.player.direction(Direction.left)
+                        self.player.set_direction(Direction.left)
                     if event.key == pygame.K_RIGHT:
-                        self.player.direction(Direction.right)
+                        self.player.set_direction(Direction.right)
                 if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-                        self.player.direction(Direction.none)
+                    if event.key == pygame.K_LEFT:
+                        if self.player.get_direction() == Direction.left:
+                            self.player.set_direction(Direction.none)
+                    elif event.key == pygame.K_RIGHT:
+                        if self.player.get_direction() == Direction.right:
+                            self.player.set_direction(Direction.none)
 
             # Calculate the next player location on the x axis
             self.player.move()
 
             # Update the display
             self.screen.window.fill(self.screen.bg_color)
-            self.screen.window.blit(self.player.pic, (self.player.x, self.player.y))
+            self.screen.window.blit(self.player.get_current_pic(), (self.player.x, self.player.y))
             pygame.display.update()
 
 

@@ -1,14 +1,19 @@
 from direction import Direction
 from screen import Screen
 from player import Player
+from missile import Missile
 import pygame
 
 # Constants
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 600
 BG_COLOR = (0, 128, 128)
-NOMINAL_ACCELERATION = 0.5
+PLAYER_ACCELERATION = 0.5
 MAX_PLAYER_SPEED = 20
+FRAME_TIME = 0.05
+MISSILE_SPEED = 0.1
+MISSILE_ACCELERATION = 0.3
+
 
 pic_move_right = [pygame.image.load("res/spaceship_N_00.png"),
                   pygame.image.load("res/spaceship_R_01.png"),
@@ -26,6 +31,19 @@ pic_move_left = [pygame.image.load("res/spaceship_N_00.png"),
                  pygame.image.load("res/spaceship_L_05.png"),
                  pygame.image.load("res/spaceship_L_06.png")]
 
+pic_missile = [pygame.image.load("res/missile_00.png"),
+               pygame.image.load("res/missile_01.png"),
+               pygame.image.load("res/missile_02.png"),
+               pygame.image.load("res/missile_03.png"),
+               pygame.image.load("res/missile_04.png"),
+               pygame.image.load("res/missile_05.png")]
+
+pic_flame = [pygame.image.load("res/flame_01.png"),
+             pygame.image.load("res/flame_02.png"),
+             pygame.image.load("res/flame_03.png"),
+             pygame.image.load("res/flame_04.png"),
+             pygame.image.load("res/flame_05.png")]
+
 
 class Space(object):
     def __init__(self):
@@ -37,10 +55,24 @@ class Space(object):
         self.player = Player(x=self.screen.width/2,
                              y=self.screen.height-self.screen.height/10,
                              screen=self.screen,
-                             nominal_acceleration=NOMINAL_ACCELERATION,
+                             acceleration=PLAYER_ACCELERATION,
                              max_speed=MAX_PLAYER_SPEED,
                              pic_move_right=pic_move_right,
-                             pic_move_left=pic_move_left)
+                             pic_move_left=pic_move_left,
+                             pic_flame=pic_flame,
+                             frame_time=FRAME_TIME)
+        self.missile1 = Missile(player=self.player,
+                                speed=MISSILE_SPEED,
+                                acceleration=MISSILE_ACCELERATION,
+                                pic=pic_missile,
+                                frame_time=FRAME_TIME,
+                                side=Direction.left)
+        self.missile2 = Missile(player=self.player,
+                                speed=MISSILE_SPEED,
+                                acceleration=MISSILE_ACCELERATION,
+                                pic=pic_missile,
+                                frame_time=FRAME_TIME,
+                                side=Direction.right)
 
         # Caption and icon
         pygame.display.set_caption("Space")
@@ -66,6 +98,10 @@ class Space(object):
                         self.player.set_direction(Direction.left)
                     if event.key == pygame.K_RIGHT:
                         self.player.set_direction(Direction.right)
+                    if event.key == pygame.K_z:
+                        self.missile1.launch()
+                    if event.key == pygame.K_x:
+                        self.missile2.launch()
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_LEFT:
                         # Check the direction change is relevant
@@ -78,10 +114,20 @@ class Space(object):
 
             # Calculate the next player location on the x axis
             self.player.move()
+            self.missile1.move()
+            self.missile2.move()
+
+            # A bit of missile logic
+            if self.missile1.is_away():
+                self.missile1.reload()
+            if self.missile2.is_away():
+                self.missile2.reload()
 
             # Update the display
             self.screen.window.fill(self.screen.bg_color)
-            self.screen.window.blit(self.player.get_current_pic(), (self.player.x, self.player.y))
+            self.missile1.draw()
+            self.missile2.draw()
+            self.player.draw()
             pygame.display.update()
 
 

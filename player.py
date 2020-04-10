@@ -1,6 +1,7 @@
 from math import copysign
 from direction import Direction
 from time import clock
+from random import randint
 
 
 class Player:
@@ -10,7 +11,7 @@ class Player:
 
     __instance = None
 
-    def __init__(self, x, y, screen, nominal_acceleration, max_speed, pic_move_right, pic_move_left):
+    def __init__(self, x, y, screen, acceleration, max_speed, pic_move_right, pic_move_left, pic_flame, frame_time):
         if Player.__instance:
             raise Exception("Only one player!")
         else:
@@ -18,13 +19,19 @@ class Player:
         self.current_acceleration = 0
         self.current_speed = 0
         self.screen = screen
-        self.nominal_acceleration = nominal_acceleration
+        self.nominal_acceleration = acceleration
         self.pic_move_right = pic_move_right
         self.pic_move_left = pic_move_left
+        self.pic_flame = pic_flame
         self.width, self.height = pic_move_right[0].get_rect().size
         self.x = x - self.width/2   # Center of the pic
         self.y = y - self.height/2  # Center of the pic
         self.max_speed = max_speed
+        self.frame_time = frame_time
+        self.next_frame = clock() + self.frame_time
+        self.current_flame_pic_num = 0
+        self.left_flame_xy_offset = (22, 73)
+        self.right_flame_xy_offset = (44, 73)
 
     def set_direction(self, direction):
         """
@@ -105,3 +112,23 @@ class Player:
             # Not moving
             pic = self.pic_move_right[0]
         return pic
+
+        # Change the picture
+
+    def get_current_flame_pic(self):
+        if clock() > self.next_frame:
+            previous_number = self.current_flame_pic_num
+            while previous_number == self.current_flame_pic_num:
+                self.current_flame_pic_num = randint(1, len(self.pic_flame) - 1)
+            self.next_frame += self.frame_time
+        return self.pic_flame[self.current_flame_pic_num]
+
+    def get_xy(self):
+        return self.x, self.y
+
+    def draw(self):
+        self.screen.window.blit(self.get_current_pic(), self.get_xy())
+        self.screen.window.blit(self.get_current_flame_pic(),
+                                tuple(map(sum, zip(self.get_xy(), self.left_flame_xy_offset))))
+        self.screen.window.blit(self.get_current_flame_pic(),
+                                tuple(map(sum, zip(self.get_xy(), self.right_flame_xy_offset))))

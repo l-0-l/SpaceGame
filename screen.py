@@ -1,7 +1,7 @@
 import pygame
 
 
-class Screen(object):
+class Screen:
 
     def __init__(self, width, height, bg_color):
         self.width = width

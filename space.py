@@ -4,6 +4,7 @@ from spaceship import Spaceship
 from missile import Missile
 from enemy import Enemy
 from const import Const
+from random import randint
 import pygame
 
 
@@ -75,6 +76,10 @@ class Space(object):
                 self.missile_left.reload()
             if self.missile_right.is_away():
                 self.missile_right.reload()
+
+            # Just randomly adding asteroids for fun
+            if randint(0, 40) == 0:
+                self.enemy.add_asteroid()
 
             # Update the display
             self.screen.draw()

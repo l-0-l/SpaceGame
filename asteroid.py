@@ -21,7 +21,7 @@ class Asteroid(Interstellar):
 
         self.width, self.height = self.image[0].get_rect().size
         self.acceleration = acceleration
-        self.frame_time = uniform(Const.FRAME_TIME_SEC / 1.5, Const.FRAME_TIME_SEC * 1.5)
+        self.frame_time = uniform(Const.FRAME_TIME_SEC / 1.5, Const.FRAME_TIME_SEC)
         self.next_frame = 0
         self.frame_num = 0
         self.num_of_images = len(self.image)

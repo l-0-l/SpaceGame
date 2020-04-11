@@ -2,42 +2,36 @@ from math import copysign
 from direction import Direction
 from time import clock
 from random import randint
+from images import Images
+from const import Const
 
 
-class Player:
+class Spaceship:
     """
     This class is a singleton, as in this game only one player can exist.
     """
 
     __instance = None
 
-    def __init__(self, x, y, screen, acceleration, max_speed, pic_move_right, pic_move_left, pic_flame, frame_time):
-        if Player.__instance:
+    def __init__(self, x, y, screen):
+        if Spaceship.__instance:
             raise Exception("Only one player!")
         else:
-            Player.__instance = self
+            Spaceship.__instance = self
         self.current_acceleration = 0
         self.current_speed = 0
         self.screen = screen
-        self.nominal_acceleration = acceleration
-        self.pic_move_right = pic_move_right
-        self.pic_move_left = pic_move_left
-        self.pic_flame = pic_flame
-        self.width, self.height = pic_move_right[0].get_rect().size
+        self.width, self.height = Images.pic_move_right[0].get_rect().size
         self.x = x - self.width/2   # Center of the pic
         self.y = y - self.height/2  # Center of the pic
-        self.max_speed = max_speed
-        self.frame_time = frame_time
-        self.next_frame = clock() + self.frame_time
+        self.next_frame = 0
         self.current_flame_pic_num = 0
-        self.left_flame_xy_offset = (22, 73)
-        self.right_flame_xy_offset = (44, 73)
 
     def set_direction(self, direction):
         """
         Set acceleration according to the direction.
         """
-        self.current_acceleration = direction.value * self.nominal_acceleration
+        self.current_acceleration = direction.value * Const.SPACESHIP_ACCELERATION
 
     def move(self):
         """
@@ -47,24 +41,24 @@ class Player:
         if self.current_acceleration != 0:
             # Accelerate
             self.current_speed += self.current_acceleration
-            if abs(self.current_speed) > self.max_speed:
-                self.current_speed = copysign(1, self.current_speed) * self.max_speed
+            if abs(self.current_speed) > Const.SPACESHIP_MAX_SPEED:
+                self.current_speed = copysign(1, self.current_speed) * Const.SPACESHIP_MAX_SPEED
         elif self.current_speed != 0:
             # Decelerate
             sign = copysign(1, self.current_speed)
-            self.current_speed = sign * (abs(self.current_speed) - self.nominal_acceleration)
+            self.current_speed = sign * (abs(self.current_speed) - Const.SPACESHIP_ACCELERATION)
             # Set speed to zero if it is very low
-            if abs(self.current_speed) < self.nominal_acceleration:
+            if abs(self.current_speed) < Const.SPACESHIP_ACCELERATION:
                 self.current_speed = 0
 
         # Calculate the next x axis location
-        if 0 < self.x + self.current_speed < self.screen.width - self.width:
+        if 0 < self.x + self.current_speed < Const.SCREEN_WIDTH - self.width:
             self.x += self.current_speed
         else:
             # We hit a wall, so change the direction
             self.current_speed = - self.current_speed
             # And slow down (lose energy on impact)
-            self.current_speed /= 1.5  # TODO: Magic number here
+            self.current_speed /= Const.SPACESHIP_SPEED_DROP_ON_SIDE_IMPACT
 
     def get_direction(self):
         """
@@ -91,8 +85,9 @@ class Player:
         Returns the current player image.
         """
         # The current picture is determined by the spaceship speed
-        num_pic = abs(round(self.current_speed / 2))  # TODO: Magic number here
-        total_pics = len(self.pic_move_right) - 1
+        num_pic = abs(round(self.current_speed / Const.SPACESHIP_ANIMATION_TO_SPEED_RATIO))
+        total_pics = len(Images.pic_move_right) - 1
+
         # The number of the picture can't be more than the pictures we have
         if num_pic >= total_pics:
             num_pic = total_pics
@@ -104,16 +99,14 @@ class Player:
         # Now we select the actual picture from the lists
         if direction == Direction.right.value:
             # Going right
-            pic = self.pic_move_right[num_pic]
+            pic = Images.pic_move_right[num_pic]
         elif direction == Direction.left.value:
             # Going left
-            pic = self.pic_move_left[num_pic]
+            pic = Images.pic_move_left[num_pic]
         else:
             # Not moving
-            pic = self.pic_move_right[0]
+            pic = Images.pic_move_right[0]
         return pic
-
-        # Change the picture
 
     def get_current_flame_pic(self):
         """
@@ -123,9 +116,9 @@ class Player:
             # Make sure we're not randomly getting the same picture
             previous_number = self.current_flame_pic_num
             while previous_number == self.current_flame_pic_num:
-                self.current_flame_pic_num = randint(1, len(self.pic_flame) - 1)
-            self.next_frame += self.frame_time
-        return self.pic_flame[self.current_flame_pic_num]
+                self.current_flame_pic_num = randint(1, len(Images.pic_flame) - 1)
+            self.next_frame += Const.FRAME_TIME
+        return Images.pic_flame[self.current_flame_pic_num]
 
     def get_xy(self):
         """
@@ -139,6 +132,8 @@ class Player:
         """
         self.screen.window.blit(self.get_current_pic(), self.get_xy())
         self.screen.window.blit(self.get_current_flame_pic(),
-                                tuple(map(sum, zip(self.get_xy(), self.left_flame_xy_offset))))
+                                (self.x + Const.SPACESHIP_FLAME_OFFSET_X_LEFT,
+                                 self.y + Const.SPACESHIP_FLAME_OFFSET_Y))
         self.screen.window.blit(self.get_current_flame_pic(),
-                                tuple(map(sum, zip(self.get_xy(), self.right_flame_xy_offset))))
+                                (self.x + Const.SPACESHIP_FLAME_OFFSET_X_RIGHT,
+                                 self.y + Const.SPACESHIP_FLAME_OFFSET_Y))

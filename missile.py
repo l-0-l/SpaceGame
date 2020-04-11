@@ -11,7 +11,7 @@ class Missile:
         self.speed = Const.MISSILE_INITIAL_SPEED
         self.width, self.height = Images.missile[0].get_rect().size
         self.away = False
-        self.next_frame = clock() + Const.FRAME_TIME_SEC
+        self.next_frame = 0
         self.current_pic_num = 0
         self.on_board = True
         self.side = side
@@ -59,7 +59,7 @@ class Missile:
                 previous_number = self.current_pic_num
                 while previous_number == self.current_pic_num:
                     self.current_pic_num = randint(1, len(Images.missile) - 1)
-                self.next_frame += Const.FRAME_TIME_SEC
+                self.next_frame = clock() + Const.FRAME_TIME_SEC
         return Images.missile[self.current_pic_num]
 
     def launch(self):

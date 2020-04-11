@@ -1,7 +1,7 @@
 import pygame
+from random import randint, uniform
 from star import Star
 from planet import Planet
-from random import randint, uniform
 from const import Const
 from images import Images
 

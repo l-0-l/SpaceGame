@@ -117,7 +117,7 @@ class Spaceship:
             previous_number = self.current_flame_pic_num
             while previous_number == self.current_flame_pic_num:
                 self.current_flame_pic_num = randint(1, len(Images.flame) - 1)
-            self.next_frame += Const.FRAME_TIME_SEC
+            self.next_frame = clock() + Const.FRAME_TIME_SEC
         return Images.flame[self.current_flame_pic_num]
 
     def get_xy(self):

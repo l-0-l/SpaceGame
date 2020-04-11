@@ -2,6 +2,7 @@ from direction import Direction
 from screen import Screen
 from spaceship import Spaceship
 from missile import Missile
+from enemy import Enemy
 from const import Const
 import pygame
 
@@ -24,6 +25,9 @@ class Space(object):
         pygame.display.set_caption("Space")
         pic_logo = pygame.image.load("res/spaceship_N_00.png")
         pygame.display.set_icon(pic_logo)
+
+        # For now, initialize a simple enemy here
+        self.enemy = Enemy(self.screen)
 
         # Begin running :)
         self.running = True
@@ -48,6 +52,8 @@ class Space(object):
                         self.missile_left.launch()
                     if event.key == pygame.K_x:
                         self.missile_right.launch()
+                    if event.key == pygame.K_a:
+                        self.enemy.add_asteroid()
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_LEFT:
                         # Check the direction change is relevant
@@ -62,6 +68,7 @@ class Space(object):
             self.spaceship.move()
             self.missile_left.move()
             self.missile_right.move()
+            self.enemy.move()
 
             # A bit of missile logic
             if self.missile_left.is_away():
@@ -74,6 +81,8 @@ class Space(object):
             self.missile_left.draw()
             self.missile_right.draw()
             self.spaceship.draw()
+            self.enemy.draw()
+
             pygame.display.update()
 
 

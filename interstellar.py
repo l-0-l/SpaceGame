@@ -9,6 +9,8 @@ class Interstellar(pygame.sprite.Sprite):
         self.speed = speed
         self.x = x
         self.y = y
+        self.width = 0
+        self.height = 0
         self.away = False
 
     def get_xy(self):
@@ -41,3 +43,15 @@ class Interstellar(pygame.sprite.Sprite):
         Return true if the object is off the screen.
         """
         return self.away
+
+    def get_width(self):
+        """
+        Return object's width.
+        """
+        return self.width
+
+    def get_height(self):
+        """
+        Return object's height.
+        """
+        return self.height

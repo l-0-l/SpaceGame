@@ -51,3 +51,14 @@ class Images:
                    pygame.image.load("res/star_2_04.png"),
                    pygame.image.load("res/star_2_05.png"),
                    pygame.image.load("res/star_2_06.png")]
+
+    asteroid1 = [pygame.image.load("res/asteroid_1_01.png"),
+                 pygame.image.load("res/asteroid_1_02.png"),
+                 pygame.image.load("res/asteroid_1_03.png"),
+                 pygame.image.load("res/asteroid_1_04.png"),
+                 pygame.image.load("res/asteroid_1_05.png"),
+                 pygame.image.load("res/asteroid_1_06.png"),
+                 pygame.image.load("res/asteroid_1_07.png"),
+                 pygame.image.load("res/asteroid_1_08.png"),
+                 pygame.image.load("res/asteroid_1_09.png"),
+                 pygame.image.load("res/asteroid_1_10.png")]

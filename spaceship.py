@@ -21,7 +21,7 @@ class Spaceship:
         self.current_acceleration = 0
         self.current_speed = 0
         self.screen = screen
-        self.width, self.height = Images.pic_move_right[0].get_rect().size
+        self.width, self.height = Images.ship_move_right[0].get_rect().size
         self.x = x - self.width/2   # Center of the pic
         self.y = y - self.height/2  # Center of the pic
         self.next_frame = 0
@@ -86,7 +86,7 @@ class Spaceship:
         """
         # The current picture is determined by the spaceship speed
         num_pic = abs(round(self.current_speed / Const.SPACESHIP_ANIMATION_TO_SPEED_RATIO))
-        total_pics = len(Images.pic_move_right) - 1
+        total_pics = len(Images.ship_move_right) - 1
 
         # The number of the picture can't be more than the pictures we have
         if num_pic >= total_pics:
@@ -99,13 +99,13 @@ class Spaceship:
         # Now we select the actual picture from the lists
         if direction == Direction.right.value:
             # Going right
-            pic = Images.pic_move_right[num_pic]
+            pic = Images.ship_move_right[num_pic]
         elif direction == Direction.left.value:
             # Going left
-            pic = Images.pic_move_left[num_pic]
+            pic = Images.ship_move_left[num_pic]
         else:
             # Not moving
-            pic = Images.pic_move_right[0]
+            pic = Images.ship_move_right[0]
         return pic
 
     def get_current_flame_pic(self):
@@ -116,9 +116,9 @@ class Spaceship:
             # Make sure we're not randomly getting the same picture
             previous_number = self.current_flame_pic_num
             while previous_number == self.current_flame_pic_num:
-                self.current_flame_pic_num = randint(1, len(Images.pic_flame) - 1)
-            self.next_frame += Const.FRAME_TIME
-        return Images.pic_flame[self.current_flame_pic_num]
+                self.current_flame_pic_num = randint(1, len(Images.flame) - 1)
+            self.next_frame += Const.FRAME_TIME_SEC
+        return Images.flame[self.current_flame_pic_num]
 
     def get_xy(self):
         """

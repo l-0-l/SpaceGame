@@ -9,9 +9,9 @@ class Missile:
     def __init__(self, player, side):
         self.player = player
         self.speed = Const.MISSILE_INITIAL_SPEED
-        self.width, self.height = Images.pic_missile[0].get_rect().size
+        self.width, self.height = Images.missile[0].get_rect().size
         self.away = False
-        self.next_frame = clock() + Const.FRAME_TIME
+        self.next_frame = clock() + Const.FRAME_TIME_SEC
         self.current_pic_num = 0
         self.on_board = True
         self.side = side
@@ -58,9 +58,9 @@ class Missile:
                 # Make sure we're not randomly getting the same picture
                 previous_number = self.current_pic_num
                 while previous_number == self.current_pic_num:
-                    self.current_pic_num = randint(1, len(Images.pic_missile) - 1)
-                self.next_frame += Const.FRAME_TIME
-        return Images.pic_missile[self.current_pic_num]
+                    self.current_pic_num = randint(1, len(Images.missile) - 1)
+                self.next_frame += Const.FRAME_TIME_SEC
+        return Images.missile[self.current_pic_num]
 
     def launch(self):
         """

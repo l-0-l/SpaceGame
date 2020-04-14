@@ -1,8 +1,8 @@
 from asteroid import Asteroid
 from random import randint, uniform
 from const import Const
-from screen import Screen
 from images import Images
+import pygame
 
 
 class Enemy:
@@ -42,3 +42,5 @@ class Enemy:
         """
         for asteroid in self.asteroids:
             self.screen.window.blit(asteroid.get_current_pic(), asteroid.get_xy())
+            if Const.DEBUG:
+                pygame.draw.rect(self.screen.window, (255, 0, 0), asteroid.hitbox, 1)

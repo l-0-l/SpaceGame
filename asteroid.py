@@ -20,6 +20,7 @@ class Asteroid(Interstellar):
                 self.image.append(pygame.transform.scale(image, (new_size, new_size)))
 
         self.width, self.height = self.image[0].get_rect().size
+        self.hitsize = (0, 0, self.width, self.height)
         self.acceleration = acceleration
         self.frame_time = uniform(Const.FRAME_TIME_SEC / 1.5, Const.FRAME_TIME_SEC)
         self.next_frame = 0
@@ -38,6 +39,7 @@ class Asteroid(Interstellar):
             self.x, self.y = tuple(map(sum, zip((self.x, self.y), self.speed)))
             if self.off_the_screen():
                 self.away = True
+        super().move()
 
     def get_current_pic(self):
         """
@@ -53,4 +55,3 @@ class Asteroid(Interstellar):
                 self.frame_num = self.num_of_images - 1
             self.next_frame = clock() + self.frame_time
         return self.image[self.frame_num]
-

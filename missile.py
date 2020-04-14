@@ -3,13 +3,17 @@ from random import randint
 from direction import Direction
 from images import Images
 from const import Const
+from interstellar import Interstellar
+from pygame import draw
 
 
-class Missile:
+class Missile(Interstellar):
     def __init__(self, player, side):
+        super().__init__(Images.missile, speed=0, x=0, y=0)
         self.player = player
-        self.speed = Const.MISSILE_INITIAL_SPEED
-        self.width, self.height = Images.missile[0].get_rect().size
+        self.speed = (0, Const.MISSILE_INITIAL_SPEED)
+        self.width, self.height = self.image[0].get_rect().size
+        self.hitsize = (0, 0, self.width, self.height - 12)  # TODO: magic number here
         self.away = False
         self.next_frame = 0
         self.current_pic_num = 0
@@ -34,16 +38,11 @@ class Missile:
         else:
             # The missile is on its way to the target
             if self.y > -self.height:
-                self.speed += Const.MISSILE_ACCELERATION
-                self.y -= self.speed
+                self.speed = tuple(map(sum, zip((0, Const.MISSILE_ACCELERATION), self.speed)))
+                self.y -= self.speed[1]
             else:
                 self.away = True
-
-    def get_xy(self):
-        """
-        Returns the position.
-        """
-        return self.x, self.y
+        super().move()
 
     def get_current_pic(self):
         """
@@ -58,9 +57,9 @@ class Missile:
                 # Make sure we're not randomly getting the same picture
                 previous_number = self.current_pic_num
                 while previous_number == self.current_pic_num:
-                    self.current_pic_num = randint(1, len(Images.missile) - 1)
+                    self.current_pic_num = randint(1, len(self.image) - 1)
                 self.next_frame = clock() + Const.FRAME_TIME_SEC
-        return Images.missile[self.current_pic_num]
+        return self.image[self.current_pic_num]
 
     def launch(self):
         """
@@ -68,22 +67,18 @@ class Missile:
         """
         self.on_board = False
 
-    def is_away(self):
-        """
-        Returns the away status, i.e. when the missile is off the screen.
-        """
-        return self.away
-
     def reload(self):
         """
         Resets the missile status, and attach it back to the player.
         """
         self.on_board = True
         self.away = False
-        self.speed = Const.MISSILE_INITIAL_SPEED
+        self.speed = (0, Const.MISSILE_INITIAL_SPEED)
 
     def draw(self):
         """
         Draws the missile.
         """
         self.player.screen.window.blit(self.get_current_pic(), self.get_xy())
+        if Const.DEBUG:
+            draw.rect(self.player.screen.window, (255, 0, 0), self.hitbox, 1)

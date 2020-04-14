@@ -12,6 +12,8 @@ class Interstellar(pygame.sprite.Sprite):
         self.width = 0
         self.height = 0
         self.away = False
+        self.hitbox = (0, 0, 0, 0)
+        self.hitsize = (0, 0, 0, 0)
 
     def get_xy(self):
         """
@@ -28,9 +30,9 @@ class Interstellar(pygame.sprite.Sprite):
 
     def move(self):
         """
-        Move the object. <Requires override>
+        Move the object.
         """
-        pass
+        self.hitbox = tuple(map(sum, zip((self.x, self.y, 0, 0), self.hitsize)))
 
     def get_current_pic(self):
         """

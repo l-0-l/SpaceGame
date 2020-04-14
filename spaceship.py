@@ -4,9 +4,11 @@ from time import clock
 from random import randint
 from images import Images
 from const import Const
+from interstellar import Interstellar
+from pygame import draw
 
 
-class Spaceship:
+class Spaceship(Interstellar):
     """
     This class is a singleton, as in this game only one player can exist.
     """
@@ -14,6 +16,7 @@ class Spaceship:
     __instance = None
 
     def __init__(self, x, y, screen):
+        super().__init__(None, speed=0, x=0, y=0)
         if Spaceship.__instance:
             raise Exception("Only one player!")
         else:
@@ -22,6 +25,7 @@ class Spaceship:
         self.current_speed = 0
         self.screen = screen
         self.width, self.height = Images.ship_move_right[0].get_rect().size
+        self.hitsize = (7, 7, self.width-12, self.height-10)
         self.x = x - self.width/2   # Center of the pic
         self.y = y - self.height/2  # Center of the pic
         self.next_frame = 0
@@ -59,6 +63,9 @@ class Spaceship:
             self.current_speed = - self.current_speed
             # And slow down (lose energy on impact)
             self.current_speed /= Const.SPACESHIP_SPEED_DROP_ON_SIDE_IMPACT
+
+        # Update the hitbox
+        super().move()
 
     def get_direction(self):
         """
@@ -137,3 +144,5 @@ class Spaceship:
         self.screen.window.blit(self.get_current_flame_pic(),
                                 (self.x + Const.SPACESHIP_FLAME_OFFSET_X_RIGHT,
                                  self.y + Const.SPACESHIP_FLAME_OFFSET_Y))
+        if Const.DEBUG:
+            draw.rect(self.screen.window, (255, 0, 0), self.hitbox, 1)

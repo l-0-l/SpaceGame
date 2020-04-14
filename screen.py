@@ -14,12 +14,12 @@ class Screen:
         self.planet = None
         for i in range(Const.STAR_NUM_SMALL):
             self.stars.append(Star(image=Images.star_small,
-                                   speed=uniform(Const.STAR_SPEED_SMALL[0], Const.STAR_SPEED_SMALL[1]),
+                                   speed=(0, uniform(Const.STAR_SPEED_SMALL[0], Const.STAR_SPEED_SMALL[1])),
                                    x=randint(Const.STAR_COORD_APPEAR, Const.SCREEN_WIDTH),
                                    y=randint(Const.STAR_COORD_APPEAR, Const.SCREEN_HEIGHT)))
         for i in range(Const.STAR_NUM_BRIGHT):
             self.stars.append(Star(image=Images.star_bright,
-                                   speed=uniform(Const.STAR_SPEED_BRIGHT[0], Const.STAR_SPEED_BRIGHT[1]),
+                                   speed=(0, uniform(Const.STAR_SPEED_BRIGHT[0], Const.STAR_SPEED_BRIGHT[1])),
                                    x=randint(Const.STAR_COORD_APPEAR, Const.SCREEN_WIDTH),
                                    y=randint(Const.STAR_COORD_APPEAR, Const.SCREEN_HEIGHT)))
         self.planet = Planet(image=Images.planets[randint(0, len(Images.planets) - 1)],

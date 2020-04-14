@@ -13,7 +13,7 @@ class Star(Interstellar):
         """
         Move the stars over the screen, they're in the background.
         """
-        self.y += self.speed
+        self.y += self.speed[1]
         # The star has gone beyond the screen
         if self.y > Const.SCREEN_HEIGHT:
             self.x = randint(Const.STAR_COORD_APPEAR, Const.SCREEN_WIDTH)

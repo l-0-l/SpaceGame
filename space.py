@@ -45,6 +45,8 @@ class Space(object):
                     self.running = False
                 # Respond to keys
                 if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        self.running = False
                     if event.key == pygame.K_LEFT:
                         self.spaceship.set_direction(Direction.left)
                     if event.key == pygame.K_RIGHT:

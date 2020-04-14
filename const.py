@@ -47,4 +47,4 @@ class Const:
     INITIAL_X_POS = SCREEN_WIDTH / 2
     INITIAL_Y_POS = SCREEN_HEIGHT - SCREEN_HEIGHT / 10
 
-    DEBUG = True
+    DEBUG = False

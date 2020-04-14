@@ -1,5 +1,5 @@
 from math import copysign
-from random import randint, uniform
+from random import randint
 from const import Const
 from interstellar import Interstellar
 from time import clock
@@ -20,9 +20,9 @@ class Asteroid(Interstellar):
                 self.image.append(pygame.transform.scale(image, (new_size, new_size)))
 
         self.width, self.height = self.image[0].get_rect().size
-        self.hitsize = (0, 0, self.width, self.height)
+        self.hitsize = (self.width//9, self.height//9, self.width-self.width//9, self.height-self.height//9)
         self.acceleration = acceleration
-        self.frame_time = uniform(Const.FRAME_TIME_SEC / 1.5, Const.FRAME_TIME_SEC)
+        self.frame_time = (1 - self.speed[1] / Const.ASTEROID_SPEED_VERTICAL_MAX) / Const.ASTEROID_ROTATION_COEFFICIENT
         self.next_frame = 0
         self.frame_num = 0
         self.num_of_images = len(self.image)

@@ -25,7 +25,7 @@ class Spaceship(Interstellar):
         self.current_speed = 0
         self.screen = screen
         self.width, self.height = Images.ship_move_right[0].get_rect().size
-        self.hitsize = (7, 7, self.width-12, self.height-10)
+        self.hitsize = (7, 15, self.width-12, self.height-27)  # TODO: magic numbers here
         self.x = x - self.width/2   # Center of the pic
         self.y = y - self.height/2  # Center of the pic
         self.next_frame = 0

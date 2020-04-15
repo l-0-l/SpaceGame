@@ -7,34 +7,37 @@ import pygame
 
 
 class Asteroid(Interstellar):
-    def __init__(self, image, speed, acceleration, x=0, y=0):
-        super().__init__(image, speed, x, y)
+    def __init__(self, images, explode_images, speed, acceleration, explode_sounds, x=0, y=0):
+        super().__init__(images, speed, x, y)
 
         orig_width, orig_height = self.original_image[0].get_rect().size
 
         # Alter the original size only if the current size is above the minimum
         if Const.ASTEROID_MIN_SIZE < orig_width:
-            self.image = []
+            self.images = []
             new_size = randint(Const.ASTEROID_MIN_SIZE, orig_width)  # Assuming the asteroids are square images
             for image in self.original_image:
-                self.image.append(pygame.transform.scale(image, (new_size, new_size)))
+                self.images.append(pygame.transform.scale(image, (new_size, new_size)))
 
         self.width, self.height = self.image[0].get_rect().size
-        self.hitsize = (self.width//9, self.height//9, self.width-self.width//9, self.height-self.height//9)
+        self.hitsize = (Const.ASTEROID_HIT_DELTA, Const.ASTEROID_HIT_DELTA,
+                        self.width-Const.ASTEROID_HIT_DELTA, self.height-Const.ASTEROID_HIT_DELTA)
         self.acceleration = acceleration
-        self.frame_time = (1 - self.speed[1] / Const.ASTEROID_SPEED_VERTICAL_MAX) / Const.ASTEROID_ROTATION_COEFFICIENT
+        self.frame_time = (1 - self.speed[1] / Const.ASTEROID_SPEED_VERTICAL_MAX) / Const.ASTEROID_ANIMATE_COEFFICIENT
         self.next_frame = 0
         self.frame_num = 0
+        self.exploding = False
+        self.explode_images = explode_images
         self.num_of_images = len(self.image)
-
-    def off_the_screen(self):
-        if self.x > Const.SCREEN_WIDTH or self.y > Const.SCREEN_HEIGHT or \
-                self.x + self.width < 0 or self.y + self.height < Const.ASTEROID_APPEAR_HEIGHT:
-            return True
-        else:
-            return False
+        self.num_of_explosion_frames = len(self.explode_images)
+        self.current_image_set = self.images
+        self.explode_sounds = explode_sounds
+        self.num_of_explode_sounds = len(explode_sounds) - 1
 
     def move(self):
+        """
+        Move the asteroid.
+        """
         if not self.away:
             self.x, self.y = tuple(map(sum, zip((self.x, self.y), self.speed)))
             if self.off_the_screen():
@@ -47,11 +50,44 @@ class Asteroid(Interstellar):
         """
         # Change the picture
         if clock() > self.next_frame:
-            # Chose animation direction by the asteroid's horizontal direction
-            self.frame_num += int(copysign(1, self.speed[0]+self.acceleration[0]))
-            if self.frame_num >= self.num_of_images:
-                self.frame_num = 0
-            elif self.frame_num < 0:
-                self.frame_num = self.num_of_images - 1
+            if self.exploding:
+                if self.frame_num < self.num_of_explosion_frames - 1:
+                    self.frame_num += 1
+                else:
+                    self.away = True
+            else:
+                # Chose animation direction by the asteroid's horizontal direction
+                self.frame_num += int(copysign(1, self.speed[0]+self.acceleration[0]))
+                if self.frame_num >= self.num_of_images:
+                    self.frame_num = 0
+                elif self.frame_num < 0:
+                    self.frame_num = self.num_of_images - 1
             self.next_frame = clock() + self.frame_time
-        return self.image[self.frame_num]
+
+        return self.current_image_set[self.frame_num]
+
+    def is_hit(self):
+        """
+        Return whether the asteroid is already hit.
+        """
+        return self.exploding
+
+    def hit(self):
+        """
+        Cause the asteroid to become hit.
+        """
+        self.exploding = True
+        self.frame_num = 0
+        self.frame_time = Const.ASTEROID_EXPLOSION_ANIMATE_SPEED
+        self.current_image_set = self.explode_images
+        orig_width = self.width
+        orig_height = self.height
+        self.width, self.height = self.current_image_set[0].get_rect().size
+        self.x = self.x - self.width // 2 + orig_width // 2
+        self.y = self.y - self.height // 2 + orig_height // 2
+        self.hitsize = (Const.ASTEROID_EXPLOSION_HIT_DELTA,
+                        Const.ASTEROID_EXPLOSION_HIT_DELTA,
+                        self.width - Const.ASTEROID_EXPLOSION_HIT_DELTA*2,
+                        self.height - Const.ASTEROID_EXPLOSION_HIT_DELTA*2)
+        sound = self.explode_sounds[randint(0, self.num_of_explode_sounds)]
+        sound.play()

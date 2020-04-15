@@ -5,6 +5,7 @@ from missile import Missile
 from enemy import Enemy
 from const import Const
 from random import randint
+from resources import Resources
 import pygame
 
 
@@ -18,17 +19,23 @@ class Space(object):
         # There's one player in this game
         self.spaceship = Spaceship(x=Const.INITIAL_X_POS, y=Const.INITIAL_Y_POS, screen=self.screen)
 
+        # For now, initialize a simple enemy here
+        self.enemy = Enemy(self.screen)
+
         # There are only two missiles in this game, the left one and the right one
-        self.missile_left = Missile(player=self.spaceship, side=Direction.left)
-        self.missile_right = Missile(player=self.spaceship, side=Direction.right)
+        self.missile_left = Missile(player=self.spaceship,
+                                    side=Direction.left,
+                                    enemy=self.enemy,
+                                    launch_sound=Resources.wav_launch)
+        self.missile_right = Missile(player=self.spaceship,
+                                     side=Direction.right,
+                                     enemy=self.enemy,
+                                     launch_sound=Resources.wav_launch)
 
         # Caption and icon
         pygame.display.set_caption("Space")
         pic_logo = pygame.image.load("res/spaceship_N_00.png")
         pygame.display.set_icon(pic_logo)
-
-        # For now, initialize a simple enemy here
-        self.enemy = Enemy(self.screen)
 
         # Begin running :)
         self.running = True
@@ -80,7 +87,7 @@ class Space(object):
                 self.missile_right.reload()
 
             # Just randomly adding asteroids for fun
-            if randint(0, 40) == 0:
+            if randint(0, 30) == 0:
                 self.enemy.add_asteroid()
 
             # Update the display

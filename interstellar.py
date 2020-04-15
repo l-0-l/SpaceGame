@@ -1,4 +1,5 @@
 import pygame
+from const import Const
 
 
 class Interstellar(pygame.sprite.Sprite):
@@ -21,6 +22,12 @@ class Interstellar(pygame.sprite.Sprite):
         """
         return self.x, self.y
 
+    def get_hitbox(self):
+        """
+        Returns the hitbox.
+        """
+        return self.hitbox
+
     def set_xy(self, x, y):
         """
         Sets the position.
@@ -32,7 +39,7 @@ class Interstellar(pygame.sprite.Sprite):
         """
         Move the object.
         """
-        self.hitbox = tuple(map(sum, zip((self.x, self.y, 0, 0), self.hitsize)))
+        self.hitbox = pygame.Rect(tuple(map(sum, zip((self.x, self.y, 0, 0), self.hitsize))))
 
     def get_current_pic(self):
         """
@@ -57,3 +64,13 @@ class Interstellar(pygame.sprite.Sprite):
         Return object's height.
         """
         return self.height
+
+    def off_the_screen(self):
+        """
+        Return true if the asteroid has vanished from the screen
+        """
+        if self.x > Const.OFF_THE_SCREEN_RIGHT or self.y > Const.OFF_THE_SCREEN_BOTTOM or \
+                self.x + self.width < Const.OFF_THE_SCREEN_LEFT or self.y + self.height < Const.OFF_THE_SCREEN_TOP:
+            return True
+        else:
+            return False

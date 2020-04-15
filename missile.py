@@ -1,24 +1,26 @@
 from time import clock
 from random import randint
 from direction import Direction
-from images import Images
+from resources import Resources
 from const import Const
 from interstellar import Interstellar
-from pygame import draw
+import pygame
 
 
 class Missile(Interstellar):
-    def __init__(self, player, side):
-        super().__init__(Images.missile, speed=0, x=0, y=0)
+    def __init__(self, player, side, enemy, launch_sound):
+        super().__init__(Resources.missile, speed=0, x=0, y=0)
         self.player = player
         self.speed = (0, Const.MISSILE_INITIAL_SPEED)
         self.width, self.height = self.image[0].get_rect().size
-        self.hitsize = (0, 0, self.width, self.height - 12)  # TODO: magic number here
+        self.hitsize = pygame.Rect(0, 0, self.width, self.height - Const.MISSILE_FLAME_SIZE)
         self.away = False
         self.next_frame = 0
         self.current_pic_num = 0
         self.on_board = True
         self.side = side
+        self.enemy = enemy
+        self.launch_sound = launch_sound[0]
         self.x = 0
         self.y = 0
 
@@ -37,12 +39,18 @@ class Missile(Interstellar):
             self.y += Const.MISSILE_STOWED_OFFSET_Y
         else:
             # The missile is on its way to the target
-            if self.y > -self.height:
+            if self.y > Const.OFF_THE_SCREEN_TOP:
                 self.speed = tuple(map(sum, zip((0, Const.MISSILE_ACCELERATION), self.speed)))
                 self.y -= self.speed[1]
             else:
                 self.away = True
         super().move()
+
+        # Check if we collide into anything
+        for asteroid in self.enemy.asteroids:
+            if not self.on_board and self.hitbox.colliderect(asteroid.hitbox):
+                self.away = True
+                asteroid.hit()
 
     def get_current_pic(self):
         """
@@ -65,7 +73,9 @@ class Missile(Interstellar):
         """
         Launches the missile - means detach it from player.
         """
-        self.on_board = False
+        if self.on_board:
+            self.on_board = False
+            self.launch_sound.play()
 
     def reload(self):
         """
@@ -81,4 +91,4 @@ class Missile(Interstellar):
         """
         self.player.screen.window.blit(self.get_current_pic(), self.get_xy())
         if Const.DEBUG:
-            draw.rect(self.player.screen.window, (255, 0, 0), self.hitbox, 1)
+            pygame.draw.rect(self.player.screen.window, (255, 0, 0), self.hitbox, 1)

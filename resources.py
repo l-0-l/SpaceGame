@@ -1,7 +1,7 @@
 import pygame
 
 
-class Images:
+class Resources:
 
     ship_move_right = [pygame.image.load("res/spaceship_N_00.png"),
                        pygame.image.load("res/spaceship_R_01.png"),
@@ -68,3 +68,10 @@ class Images:
                  pygame.image.load("res/asteroid_1_08.png"),
                  pygame.image.load("res/asteroid_1_09.png"),
                  pygame.image.load("res/asteroid_1_10.png")]
+
+    pygame.mixer.init()
+
+    wav_launch = [pygame.mixer.Sound("res/launch.wav")]
+
+    wav_explosion = [pygame.mixer.Sound("res/explosion_01.wav"),
+                     pygame.mixer.Sound("res/explosion_02.wav")]

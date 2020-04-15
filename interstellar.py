@@ -3,10 +3,10 @@ from const import Const
 
 
 class Interstellar(pygame.sprite.Sprite):
-    def __init__(self, image, speed, x=0, y=0, *groups):
+    def __init__(self, images, speed, x=0, y=0, *groups):
         super().__init__(*groups)
-        self.original_image = image
-        self.image = self.original_image
+        self.original_images = images
+        self.images = self.original_images
         self.speed = speed
         self.x = x
         self.y = y
@@ -45,7 +45,7 @@ class Interstellar(pygame.sprite.Sprite):
         """
         Return the current picture.
         """
-        return self.image
+        return self.images
 
     def is_away(self):
         """

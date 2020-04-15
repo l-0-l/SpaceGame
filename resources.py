@@ -69,6 +69,22 @@ class Resources:
                  pygame.image.load("res/asteroid_1_09.png"),
                  pygame.image.load("res/asteroid_1_10.png")]
 
+    invader1 = [pygame.image.load("res/invader_00.png"),
+                pygame.image.load("res/invader_01.png"),
+                pygame.image.load("res/invader_02.png"),
+                pygame.image.load("res/invader_03.png"),
+                pygame.image.load("res/invader_04.png"),
+                pygame.image.load("res/invader_05.png"),
+                pygame.image.load("res/invader_06.png"),
+                pygame.image.load("res/invader_07.png"),
+                pygame.image.load("res/invader_08.png"),
+                pygame.image.load("res/invader_09.png"),
+                pygame.image.load("res/invader_10.png"),
+                pygame.image.load("res/invader_11.png"),
+                pygame.image.load("res/invader_12.png"),
+                pygame.image.load("res/invader_13.png"),
+                pygame.image.load("res/invader_14.png")]
+
     pygame.mixer.pre_init(44100, -16, 2, 1024)
     pygame.mixer.init()
 

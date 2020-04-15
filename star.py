@@ -4,8 +4,8 @@ from interstellar import Interstellar
 
 
 class Star(Interstellar):
-    def __init__(self, image, speed, x, y):
-        super().__init__(image, speed, x, y)
+    def __init__(self, images, speed, x, y):
+        super().__init__(images, speed, x, y)
         self.animate_in_progress = False
         self.animation_frame = 0
 
@@ -26,7 +26,7 @@ class Star(Interstellar):
         if self.animate_in_progress:
             # If we're animating, go to the next step
             self.animation_frame += 1
-            if self.animation_frame >= len(self.image):
+            if self.animation_frame >= len(self.images):
                 # If the animation ended, stop it
                 self.animation_frame = 0
                 self.animate_in_progress = False
@@ -34,4 +34,4 @@ class Star(Interstellar):
             # We may want to start the animation
             if randint(0, Const.STAR_ANIMATION_CHANCE) == 0:
                 self.animate_in_progress = True
-        return self.image[self.animation_frame]
+        return self.images[self.animation_frame]

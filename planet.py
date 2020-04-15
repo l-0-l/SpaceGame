@@ -5,12 +5,12 @@ import pygame
 
 
 class Planet(Interstellar):
-    def __init__(self, image, speed, x=0, y=0):
-        super().__init__(image, speed, x, y)
-        orig_width, orig_height = self.original_image.get_rect().size
+    def __init__(self, images, speed, x=0, y=0):
+        super().__init__(images, speed, x, y)
+        orig_width, orig_height = self.original_images.get_rect().size
         new_size = randint(Const.PLANET_MIN_SIZE, orig_width) / orig_width  # Assuming the planets are square images
         new_angle = randint(0, 179)
-        self.image = pygame.transform.rotozoom(self.original_image, new_angle, new_size)
+        self.image = pygame.transform.rotozoom(self.original_images, new_angle, new_size)
         self.width, self.height = self.image.get_rect().size
 
     def move(self):

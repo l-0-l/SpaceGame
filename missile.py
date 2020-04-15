@@ -12,7 +12,7 @@ class Missile(Interstellar):
         super().__init__(Resources.missile, speed=0, x=0, y=0)
         self.player = player
         self.speed = (0, Const.MISSILE_INITIAL_SPEED)
-        self.width, self.height = self.image[0].get_rect().size
+        self.width, self.height = self.images[0].get_rect().size
         self.hitsize = pygame.Rect(0, 0, self.width, self.height - Const.MISSILE_FLAME_SIZE)
         self.away = False
         self.next_frame = 0
@@ -65,9 +65,9 @@ class Missile(Interstellar):
                 # Make sure we're not randomly getting the same picture
                 previous_number = self.current_pic_num
                 while previous_number == self.current_pic_num:
-                    self.current_pic_num = randint(1, len(self.image) - 1)
+                    self.current_pic_num = randint(1, len(self.images) - 1)
                 self.next_frame = clock() + Const.FRAME_TIME_SEC
-        return self.image[self.current_pic_num]
+        return self.images[self.current_pic_num]
 
     def launch(self):
         """

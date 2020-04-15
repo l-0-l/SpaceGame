@@ -6,6 +6,7 @@ from enemy import Enemy
 from const import Const
 from random import randint
 from resources import Resources
+from invader import Invader
 import pygame
 
 
@@ -35,6 +36,8 @@ class Space(object):
         pygame.display.set_caption("Space")
         pic_logo = pygame.image.load("res/spaceship_N_00.png")
         pygame.display.set_icon(pic_logo)
+
+        self.num_of_invaders = 0
 
         # Begin running :)
         self.running = True
@@ -88,6 +91,10 @@ class Space(object):
             # Just randomly adding asteroids for fun
             if randint(0, 30) == 0:
                 self.enemy.add_asteroid()
+
+            # if self.num_of_invaders == 0:
+            #     self.enemy.add_invader()
+            #     self.num_of_invaders += 1
 
             # Update the display
             self.screen.draw()

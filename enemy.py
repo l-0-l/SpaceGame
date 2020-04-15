@@ -1,4 +1,5 @@
 from asteroid import Asteroid
+from invader import Invader
 from random import randint, uniform
 from const import Const
 from resources import Resources
@@ -9,6 +10,7 @@ class Enemy:
     def __init__(self, screen):
         self.screen = screen
         self.asteroids = []
+        self.invaders = []
 
     def add_asteroid(self):
         """
@@ -30,6 +32,10 @@ class Enemy:
         asteroid.set_xy(x, y)
         self.asteroids.append(asteroid)
 
+    def add_invader(self):
+        invader = Invader(Resources.invader1, Resources.explosion, Resources.wav_explosion, 350, 200)
+        self.invaders.append(invader)
+
     def move(self):
         """
         Moves all existing enemies.
@@ -45,10 +51,19 @@ class Enemy:
                 for other_asteroid in self.asteroids:
                     if not other_asteroid.is_hit() and asteroid.hitbox.colliderect(other_asteroid.hitbox):
                         other_asteroid.hit()
-
         # If some asteroids have moved away from the screen, they must be removed
         for asteroid in to_remove:
             self.asteroids.remove(asteroid)
+
+        to_remove = []
+        # Move all invaders
+        for invader in self.invaders:
+            invader.move()
+            if invader.is_away():
+                to_remove.append(invader)
+        # If some invaders have moved away from the screen, they must be removed
+        for invader in to_remove:
+            self.invaders.remove(invader)
 
     def draw(self):
         """
@@ -58,3 +73,7 @@ class Enemy:
             self.screen.window.blit(asteroid.get_current_pic(), asteroid.get_xy())
             if Const.DEBUG:
                 pygame.draw.rect(self.screen.window, (255, 0, 0), asteroid.get_hitbox(), 1)
+        for invader in self.invaders:
+            self.screen.window.blit(invader.get_current_pic(), invader.get_xy())
+            if Const.DEBUG:
+                pygame.draw.rect(self.screen.window, (255, 0, 0), invader.get_hitbox(), 1)

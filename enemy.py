@@ -44,7 +44,6 @@ class Enemy:
             if asteroid.is_hit():
                 for other_asteroid in self.asteroids:
                     if not other_asteroid.is_hit() and asteroid.hitbox.colliderect(other_asteroid.hitbox):
-                        print("And another one!")
                         other_asteroid.hit()
 
         # If some asteroids have moved away from the screen, they must be removed

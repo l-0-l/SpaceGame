@@ -69,6 +69,7 @@ class Resources:
                  pygame.image.load("res/asteroid_1_09.png"),
                  pygame.image.load("res/asteroid_1_10.png")]
 
+    pygame.mixer.pre_init(44100, -16, 2, 1024)
     pygame.mixer.init()
 
     wav_launch = [pygame.mixer.Sound("res/launch.wav")]

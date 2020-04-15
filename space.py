@@ -13,10 +13,9 @@ class Space(object):
     def __init__(self):
         # Initialization
         pygame.init()
-
         self.screen = Screen()
 
-        # There's one player in this game
+        # There's one spaceship in this game
         self.spaceship = Spaceship(x=Const.INITIAL_X_POS, y=Const.INITIAL_Y_POS, screen=self.screen)
 
         # For now, initialize a simple enemy here

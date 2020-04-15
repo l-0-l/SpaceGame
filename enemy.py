@@ -3,6 +3,7 @@ from invader import Invader
 from random import randint, uniform
 from const import Const
 from resources import Resources
+from direction import Direction
 import pygame
 
 
@@ -33,7 +34,12 @@ class Enemy:
         self.asteroids.append(asteroid)
 
     def add_invader(self):
-        invader = Invader(Resources.invader1, Resources.explosion, Resources.wav_explosion, 350, 200)
+        invader = Invader(images=Resources.invader1,
+                          explode_images=Resources.explosion,
+                          explode_sounds=Resources.wav_explosion,
+                          x=550, y=100,
+                          direction=Direction.right,
+                          speed=(1, 0))
         self.invaders.append(invader)
 
     def move(self):

@@ -92,9 +92,10 @@ class Space(object):
             if randint(0, 30) == 0:
                 self.enemy.add_asteroid()
 
-            # if self.num_of_invaders == 0:
-            #     self.enemy.add_invader()
-            #     self.num_of_invaders += 1
+            if Const.DEBUG:
+                if self.num_of_invaders == 0:
+                    self.enemy.add_invader()
+                    self.num_of_invaders += 1
 
             # Update the display
             self.screen.draw()

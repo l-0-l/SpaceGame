@@ -3,6 +3,7 @@ from enemies import Enemies
 from const import Const
 from random import randint
 from player import Player
+from time import clock
 import pygame
 import enum
 
@@ -20,6 +21,7 @@ class Gameplay:
         self.__setup_levels()
         self.initialize_level()
         self.level_font = pygame.font.Font("res/PixelEmulator-xq08.ttf", 24)
+        self.notification_time = 0
 
     class Probability(enum.Enum):
         very_low = 100
@@ -96,6 +98,7 @@ class Gameplay:
             self.enemies.add_invader(x=invader_location[0],
                                      y=invader_location[1],
                                      speed=1)
+        self.notification_time = clock() + 3
 
     def end_level(self):
         """
@@ -135,7 +138,7 @@ class Gameplay:
         """
         self.enemies.draw()
         self.player.draw()
-        if not self.invaders_in_place:
+        if clock() < self.notification_time:
             level = self.player.font.render("Level " + str(self.level + 1), True, (255, 255, 255))
             width, height = level.get_rect().size
             level = pygame.transform.scale(level, (width * 4, height * 4))

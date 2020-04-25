@@ -37,6 +37,7 @@ class Space(object):
 
         # Start running :)
         self.running = True
+        self.game.initialize_level()
 
     def main(self):
         """ Main game loop """

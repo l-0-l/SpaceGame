@@ -19,11 +19,11 @@ class Space(object):
         self.spaceship = Spaceship(x=Const.INITIAL_X_POS, y=Const.INITIAL_Y_POS, screen=self.screen)
 
         # There are only two missiles in this game, the left one and the right one
-        self.missile_left = Missile(player=self.spaceship,
+        self.missile_left = Missile(spaceship=self.spaceship,
                                     side=Direction.left,
                                     enemies=self.game.enemies,
                                     launch_sound=Resources.wav_launch)
-        self.missile_right = Missile(player=self.spaceship,
+        self.missile_right = Missile(spaceship=self.spaceship,
                                      side=Direction.right,
                                      enemies=self.game.enemies,
                                      launch_sound=Resources.wav_launch)

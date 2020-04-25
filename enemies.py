@@ -40,6 +40,9 @@ class Enemies:
         self.asteroids.append(asteroid)
 
     def add_invader(self, x, y, speed):
+        """
+        Add an invader to enemies, converting the provided parameters.
+        """
         invader = Invader(images=Resources.invader1,
                           explode_images=Resources.explosion,
                           explode_sounds=Resources.wav_explosion,
@@ -50,6 +53,9 @@ class Enemies:
         self.invaders.append(invader)
 
     def invaders_arrived(self):
+        """
+        The invaders have reached their nominal height.
+        """
         if randint(0, 1) == 0:
             direction = Direction.right
         else:
@@ -58,12 +64,18 @@ class Enemies:
             invader.arrived(direction)
 
     def all_invaders_appeared(self):
+        """
+        Check if all invaders already appear on the screen.
+        """
         for invader in self.invaders:
             if invader.get_xy()[1] < Const.INVADER_TOP_BORDER:
                 return False
         return True
 
     def current_number_of_invaders(self):
+        """
+        Return the remaining number of invaders.
+        """
         return len(self.invaders)
 
     def move(self):

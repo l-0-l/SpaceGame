@@ -124,7 +124,6 @@ class Spaceship(Interstellar):
             while previous_number == self.current_flame_pic_num:
                 self.current_flame_pic_num = randint(0, len(Resources.flame) - 1)
             self.next_frame = clock() + Const.FRAME_TIME_SEC
-        print(self.current_flame_pic_num)
         return Resources.flame[self.current_flame_pic_num]
 
     def get_xy(self):
@@ -133,9 +132,15 @@ class Spaceship(Interstellar):
         """
         return self.x, self.y
 
+    def get_horizontal_speed(self):
+        """
+        Return the current speed
+        """
+        return self.current_speed
+
     def draw(self):
         """
-        Draws itself with the flames
+        Draw itself together with the flames
         """
         self.screen.window.blit(self.get_current_pic(), self.get_xy())
         self.screen.window.blit(self.get_current_flame_pic(),

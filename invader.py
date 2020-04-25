@@ -6,7 +6,7 @@ from const import Const
 class Invader(Enemy):
     def __init__(self, images, explode_images, explode_sounds, x, y,
                  descend_speed, horizontal_speed, descend_steps):
-        super().__init__(images, (0, 0), explode_images, explode_sounds, Enemy.Type.invader, x=x, y=y)
+        super().__init__(images, (0, 0), explode_images, explode_sounds, x=x, y=y)
         self.num_of_images = len(self.images) - 1
         self.next_frame = 0
         self.frame_num = 0

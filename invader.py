@@ -28,7 +28,7 @@ class Invader(Enemy):
         self.descend_speed = descend_speed
         self.move_aside_step = 0
         self.horizontal_speed = horizontal_speed
-        self.descend_finished = False
+        self.descend_finished = True
         self.entry_finished = False
         self.speed = (0, Const.INVADER_ENTRY_SPEED)
         self.allow_off_the_screen = True
@@ -38,7 +38,8 @@ class Invader(Enemy):
 
     def move_aside(self, direction):
         self.move_aside_step = 0
-        self.speed = (self.horizontal_speed * direction.value, 0)
+        self.horizontal_speed *= direction.value
+        self.speed = (self.horizontal_speed, 0)
 
     def swap_direction(self):
         self.horizontal_speed = -self.horizontal_speed

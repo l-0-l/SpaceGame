@@ -12,6 +12,7 @@ class Space(object):
     def __init__(self):
         # Initialization
         pygame.init()
+        self.clock = pygame.time.Clock()
         self.screen = Screen()
         self.game = Gameplay(self.screen)
 
@@ -43,7 +44,7 @@ class Space(object):
         """ Main game loop """
 
         while self.running:
-
+            self.clock.tick(60)
             # Check for events
             for event in pygame.event.get():
                 # Exit event

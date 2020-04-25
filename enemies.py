@@ -8,8 +8,8 @@ import pygame
 
 
 class Enemies:
-    def __init__(self, screen):
-        self.screen = screen
+    def __init__(self, game):
+        self.game = game
         self.asteroids = []
         self.invaders = []
 
@@ -103,6 +103,7 @@ class Enemies:
                 for other_enemy in enemies:
                     if not other_enemy.is_hit() and pygame.Rect(enemy.hitbox).colliderect(other_enemy.hitbox):
                         other_enemy.hit()
+                        self.game.add_score(other_enemy)
         # At least one invader has crossed the border, and all must go in the opposite direction
         if direction_swap_needed:
             for invader in self.invaders:
@@ -120,10 +121,10 @@ class Enemies:
         Draw all existing enemies.
         """
         for asteroid in self.asteroids:
-            self.screen.window.blit(asteroid.get_current_pic(), asteroid.get_xy())
+            self.game.screen.window.blit(asteroid.get_current_pic(), asteroid.get_xy())
             if Const.DEBUG:
-                pygame.draw.rect(self.screen.window, (255, 255, 0), asteroid.get_hitbox(), 1)
+                pygame.draw.rect(self.game.screen.window, (255, 255, 0), asteroid.get_hitbox(), 1)
         for invader in self.invaders:
-            self.screen.window.blit(invader.get_current_pic(), invader.get_xy())
+            self.game.screen.window.blit(invader.get_current_pic(), invader.get_xy())
             if Const.DEBUG:
-                pygame.draw.rect(self.screen.window, (255, 0, 0), invader.get_hitbox(), 1)
+                pygame.draw.rect(self.game.screen.window, (255, 0, 0), invader.get_hitbox(), 1)

@@ -15,6 +15,7 @@ class Asteroid(Enemy):
         self.hitsize = (hitsize_delta, hitsize_delta,
                         self.width - hitsize_delta, self.height - hitsize_delta)
         self.acceleration = acceleration
+        self.score = int(self.original_images[0].get_rect().size[0] - self.width) * 10  # More score for small ones
         # Animation speed is affected by the asteroid's vertical speed
         self.frame_time = (1 - self.speed[1] / Const.ASTEROID_SPEED_VERTICAL_MAX) / Const.ASTEROID_ANIMATE_COEFFICIENT
 

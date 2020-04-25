@@ -2,6 +2,7 @@ from level import Level
 from enemies import Enemies
 from const import Const
 from random import randint
+from player import Player
 import enum
 
 
@@ -11,7 +12,8 @@ class Gameplay:
         self.levels = []
         self.screen = screen
         self.level_initialized = False
-        self.enemies = Enemies(self.screen)
+        self.enemies = Enemies(self)
+        self.player = Player(self)
         self.invaders_in_place = False
         self.num_of_levels = levels
         self.__setup_levels()
@@ -26,7 +28,7 @@ class Gameplay:
 
     def __setup_levels(self):
         """
-        Prepare all levels with their data.
+        Prepare all levels with their data
         """
         for i in range(self.num_of_levels):
             self.levels.append(Level())
@@ -49,7 +51,7 @@ class Gameplay:
     @staticmethod
     def __layout_invaders(lines, columns):
         """
-        Arrange the invaders on the screen.
+        Arrange the invaders on the screen
         """
         invaders_locations = []
         nominal_shift = Const.INVADER_SIZE
@@ -68,13 +70,19 @@ class Gameplay:
 
     def current_level(self):
         """
-        Return the current level object.
+        Return the current level object
         """
         return self.levels[self.level]
 
+    def add_score(self, enemy):
+        """
+        Add a score for hitting an enemy
+        """
+        self.player.add_score(enemy.score + int((Const.SCREEN_HEIGHT - enemy.get_xy()[1]) / 10))
+
     def initialize_level(self):
         """
-        Initialize a new level.
+        Initialize a new level
         """
         if self.level == self.num_of_levels:
             # Game end - this is a very sad ending...
@@ -97,7 +105,7 @@ class Gameplay:
 
     def next_level(self):
         """
-        Switch to the next level.
+        Switch to the next level
         """
         if self.level < self.num_of_levels:
             self.level += 1
@@ -106,7 +114,7 @@ class Gameplay:
 
     def run(self):
         """
-        Game running logic, related to enemies.
+        Game running logic, related to enemies
         """
         # Invaders may be still entering the screen
         if not self.invaders_in_place:
@@ -121,6 +129,7 @@ class Gameplay:
 
     def draw(self):
         """
-        Draw all enemies.
+        Draw all enemies and player-related data
         """
         self.enemies.draw()
+        self.player.draw()

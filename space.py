@@ -22,11 +22,13 @@ class Space(object):
         self.missile_left = Missile(spaceship=self.spaceship,
                                     side=Direction.left,
                                     enemies=self.game.enemies,
-                                    launch_sound=Resources.wav_launch)
+                                    launch_sound=Resources.wav_launch,
+                                    game=self.game)
         self.missile_right = Missile(spaceship=self.spaceship,
                                      side=Direction.right,
                                      enemies=self.game.enemies,
-                                     launch_sound=Resources.wav_launch)
+                                     launch_sound=Resources.wav_launch,
+                                     game=self.game)
 
         # Caption and icon
         pygame.display.set_caption("Space")

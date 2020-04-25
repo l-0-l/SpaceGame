@@ -32,6 +32,7 @@ class Invader(Enemy):
         self.entry_finished = False
         self.speed = (0, Const.INVADER_ENTRY_SPEED)
         self.allow_off_the_screen = True
+        self.score = 100
 
     def set_speed(self, speed):
         self.speed = speed

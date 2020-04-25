@@ -4,11 +4,12 @@ from direction import Direction
 from resources import Resources
 from const import Const
 from interstellar import Interstellar
+from gameplay import Gameplay
 import pygame
 
 
 class Missile(Interstellar):
-    def __init__(self, spaceship, side, enemies, launch_sound):
+    def __init__(self, spaceship, side, enemies, launch_sound, game):
         super().__init__(Resources.missile, speed=0, x=0, y=0)
         self.spaceship = spaceship
         self.speed = (0, Const.MISSILE_INITIAL_SPEED)
@@ -23,6 +24,7 @@ class Missile(Interstellar):
         self.launch_sound = launch_sound[0]
         self.x = 0
         self.y = 0
+        self.game = game
 
     def move(self):
         """
@@ -53,6 +55,7 @@ class Missile(Interstellar):
             if not self.on_board and pygame.Rect(self.hitbox).colliderect(enemy.hitbox):
                 self.away = True
                 enemy.hit()
+                self.game.add_score(enemy)
 
     def get_current_pic(self):
         """

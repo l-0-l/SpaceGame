@@ -13,10 +13,17 @@ class Enemy(Interstellar):
         self.num_of_explosion_frames = len(self.explode_images) - 1
         self.num_of_explode_sounds = len(explode_sounds) - 1
         self.exploding = False
+        self.score = 0
 
     class Type(enum.Enum):
         asteroid = 0
         invader = 1
+
+    def get_score(self):
+        """
+        Return the score of this enemy
+        """
+        return self.score
 
     def set_speed(self, speed):
         """

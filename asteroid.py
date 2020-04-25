@@ -19,6 +19,9 @@ class Asteroid(Enemy):
         self.frame_time = (1 - self.speed[1] / Const.ASTEROID_SPEED_VERTICAL_MAX) / Const.ASTEROID_ANIMATE_COEFFICIENT
 
     def __set_asteroid_random_size(self):
+        """
+        Asteroids are being created with random sizes, which means we need to resize all asteroid images
+        """
         orig_width, _ = self.original_images[0].get_rect().size
         # Alter the original size only if the current size is above the minimum
         if Const.ASTEROID_MIN_SIZE < orig_width:
@@ -44,5 +47,4 @@ class Asteroid(Enemy):
                 elif self.frame_num < 0:
                     self.frame_num = self.num_of_images - 1
             self.next_frame = clock() + self.frame_time
-
         return self.current_image_set[self.frame_num]

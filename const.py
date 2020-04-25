@@ -68,4 +68,4 @@ class Const:
     INVADER_ENTRY_SPEED = 5
     INVADER_TOP_BORDER = 20
 
-    DEBUG = False
+    DEBUG = True

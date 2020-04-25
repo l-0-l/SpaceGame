@@ -22,7 +22,7 @@ class Invader(Enemy):
                                    scale_y=Const.INVADER_SIZE)  # Square invader
         self.current_image_set = self.images
         self.width, self.height = self.images[0].get_rect().size
-        self.hitsize = tuple(map(sum, zip((0, 0, self.width, self.height, 0, 0), Const.INVADER_HITSIZE)))
+        self.hitsize = tuple(map(sum, zip((0, 0, self.width, self.height), Const.INVADER_HITSIZE)))
         self.descend_steps = descend_steps
         self.descend_step = 0
         self.descend_speed = descend_speed

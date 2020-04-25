@@ -10,7 +10,7 @@ from pygame import draw
 
 class Spaceship(Interstellar):
     """
-    This class is a singleton, as in this game only one player can exist.
+    This class is a singleton, as in this game only one spaceship can exist.
     """
 
     __instance = None
@@ -18,7 +18,7 @@ class Spaceship(Interstellar):
     def __init__(self, x, y, screen):
         super().__init__(None, speed=0, x=0, y=0)
         if Spaceship.__instance:
-            raise Exception("Only one player!")
+            raise Exception("Only one spaceship!")
         else:
             Spaceship.__instance = self
         self.current_acceleration = 0
@@ -69,11 +69,10 @@ class Spaceship(Interstellar):
 
     def get_direction(self):
         """
-        Returns player's direction.
-        Actually, the direction concept is a bit tricky. This method returns the
-        direction the user wants to move to, even if currently he moves in the opposite
-        direction, but if he doesn't press any button - the actual moving direction
-        is returned.
+        Returns the spaceship's direction.
+        Actually, the direction concept is a bit tricky. This method returns the direction
+        the user wants to move to, even if currently he moves in the opposite direction,
+        but if no button is pressed - the actual moving direction is returned.
         """
         if self.current_acceleration > 0:
             direction = Direction.right
@@ -89,7 +88,7 @@ class Spaceship(Interstellar):
 
     def get_current_pic(self):
         """
-        Returns the current player image.
+        Returns the current spaceship image.
         """
         # The current picture is determined by the spaceship speed
         num_pic = abs(round(self.current_speed / Const.SPACESHIP_ANIMATION_TO_SPEED_RATIO))
@@ -123,8 +122,9 @@ class Spaceship(Interstellar):
             # Make sure we're not randomly getting the same picture
             previous_number = self.current_flame_pic_num
             while previous_number == self.current_flame_pic_num:
-                self.current_flame_pic_num = randint(1, len(Resources.flame) - 1)
+                self.current_flame_pic_num = randint(0, len(Resources.flame) - 1)
             self.next_frame = clock() + Const.FRAME_TIME_SEC
+        print(self.current_flame_pic_num)
         return Resources.flame[self.current_flame_pic_num]
 
     def get_xy(self):

@@ -60,6 +60,7 @@ class Gameplay:
 
     def initialize_level(self):
         if self.level == self.num_of_levels:
+            # Game end - this is a very sad ending...
             exit(0)
         if not self.level_initialized:
             self.level_initialized = True

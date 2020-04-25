@@ -1,16 +1,12 @@
 from enemy import Enemy
 from time import clock
 from const import Const
-from direction import Direction
-import math
 
 
 class Invader(Enemy):
-    def __init__(self, images, explode_images, explode_sounds, x, y, direction, speed):
-        super().__init__(images, (0, 0), explode_images, explode_sounds, Enemy.Type.invader, x=0, y=0)
-        self.speed = speed
-        self.x = x
-        self.y = y
+    def __init__(self, images, explode_images, explode_sounds, x, y,
+                 descend_speed, horizontal_speed, descend_steps):
+        super().__init__(images, (0, 0), explode_images, explode_sounds, Enemy.Type.invader, x=x, y=y)
         self.num_of_images = len(self.images) - 1
         self.next_frame = 0
         self.frame_num = 0
@@ -27,58 +23,46 @@ class Invader(Enemy):
         self.current_image_set = self.images
         self.width, self.height = self.images[0].get_rect().size
         self.hitsize = tuple(map(sum, zip((0, 0, self.width, self.height, 0, 0), Const.INVADER_HITSIZE)))
-        self.direction = direction
-        self.move_down_track = []
-        self.move_down_step = 0
+        self.descend_steps = descend_steps
+        self.descend_step = 0
+        self.descend_speed = descend_speed
+        self.move_aside_step = 0
+        self.horizontal_speed = horizontal_speed
+        self.descend_finished = False
         self.entry_finished = False
-
-    def get_direction(self):
-        return self.direction
+        self.speed = (0, Const.INVADER_ENTRY_SPEED)
+        self.allow_off_the_screen = True
 
     def set_speed(self, speed):
         self.speed = speed
 
-    def __calculate_curve(self):
-        self.move_down_track = []
-        n = Const.INVADER_CURVE * math.pi / 2  # Half a circumference
-        if self.x > Const.SCREEN_WIDTH // 2:
-            sign = -1
-        else:
-            sign = 1
-        i = 0
-        while i < int(n // 2 + 1):
-            x = self.x + (math.cos(2 * math.pi / n * i + sign * math.pi / 2) * (n / 2))
-            y = self.y + n // 2 + (math.sin(2 * math.pi / n * i + sign * math.pi / 2) * (n / 2))
-            self.move_down_track.append((int(x), int(y)))
-            i += self.speed[0]
-        if sign > 0:
-            self.move_down_track.reverse()
+    def move_aside(self, direction):
+        self.move_aside_step = 0
+        self.speed = (self.horizontal_speed * direction.value, 0)
 
-    def set_direction(self, direction):
-        if direction != self.direction:
-            if direction == Direction.left or direction == Direction.right:
-                self.direction = direction
-            elif direction == Direction.down:
-                self.direction = direction
-                self.move_down_step = 0
-                self.__calculate_curve()
+    def swap_direction(self):
+        self.horizontal_speed = -self.horizontal_speed
+
+    def descend(self):
+        self.descend_step = 0
+        self.descend_finished = False
+        self.speed = (0, self.descend_speed)
+
+    def get_descend_finished(self):
+        return self.descend_finished
+
+    def arrived(self, direction):
+        self.entry_finished = True
+        self.allow_off_the_screen = False
+        self.move_aside(direction)
 
     def move(self):
-        if self.direction == Direction.left or self.direction == Direction.right:
-            self.x += self.speed[0] * self.direction.value
-            if self.x >= Const.INVADER_RIGHT_BORDER and self.direction == Direction.right or \
-                    self.x <= Const.INVADER_LEFT_BORDER and self.direction == Direction.left:
-                if not self.entry_finished:
-                    self.set_direction(Direction.down)
-        elif self.direction == Direction.down:
-            self.move_down_step += 1
-            if self.move_down_step > len(self.move_down_track) - 1:
-                if self.x - self.width // 2 > Const.SCREEN_WIDTH // 2:
-                    self.set_direction(Direction.left)
-                else:
-                    self.set_direction(Direction.right)
-            else:
-                self.x, self.y = self.move_down_track[self.move_down_step]
+        if self.entry_finished:
+            if not self.descend_finished:
+                self.descend_step += 1
+                if self.descend_step >= self.descend_steps:
+                    self.descend_finished = True
+                    self.speed = (self.horizontal_speed, 0)
         super().move()
 
     def get_current_pic(self):

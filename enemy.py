@@ -1,6 +1,7 @@
 from interstellar import Interstellar
 from const import Const
 from random import randint
+from direction import Direction
 import enum
 
 
@@ -17,6 +18,23 @@ class Enemy(Interstellar):
     class Type(enum.Enum):
         asteroid = 0
         invader = 1
+
+    def set_speed(self, speed):
+        """
+        Set enemy's speed (given as a tuple of horizontal and vertical speeds)
+        """
+        self.speed = speed
+
+    def get_horizontal_direction(self):
+        """
+        Returns the horizontal direction of the enemy
+        """
+        if self.speed[0] > 0:
+            return Direction.right
+        elif self.speed[0] < 0:
+            return Direction.left
+        else:
+            return Direction.none
 
     def get_type(self):
         """
@@ -45,5 +63,12 @@ class Enemy(Interstellar):
         self.y = self.y - self.height // 2 + orig_height // 2
         self.hitsize = (Const.EXPLOSION_HIT_DELTA, Const.EXPLOSION_HIT_DELTA,
                         self.width - Const.EXPLOSION_HIT_DELTA, self.height - Const.EXPLOSION_HIT_DELTA)
-        sound = self.explode_sounds[randint(0, self.num_of_explode_sounds)]
-        sound.play()
+        explosion = self.explode_sounds[randint(0, self.num_of_explode_sounds)]
+        explosion.play()
+
+    def move(self):
+        if not self.away:
+            self.x, self.y = tuple(map(sum, zip((self.x, self.y), self.speed)))
+            if self.off_the_screen():
+                self.away = True
+        super().move()

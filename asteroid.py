@@ -3,7 +3,6 @@ from random import randint
 from const import Const
 from enemy import Enemy
 from time import clock
-import pygame
 
 
 class Asteroid(Enemy):
@@ -25,16 +24,6 @@ class Asteroid(Enemy):
         if Const.ASTEROID_MIN_SIZE < orig_width:
             new_size = randint(Const.ASTEROID_MIN_SIZE, orig_width)  # Assuming the asteroids are square images
             self.images = self.rescale(images_source=self.original_images, scale_x=new_size, scale_y=new_size)
-
-    def move(self):
-        """
-        Move the asteroid.
-        """
-        if not self.away:
-            self.x, self.y = tuple(map(sum, zip((self.x, self.y), self.speed)))
-            if self.off_the_screen():
-                self.away = True
-        super().move()
 
     def get_current_pic(self):
         """

@@ -1,8 +1,27 @@
 class Level:
-    def __init__(self, level_number):
-        self.level_number = level_number
+
+    __level_number = 0
+
+    @staticmethod
+    def new_level():
+        current_level = Level.__level_number
+        Level.__level_number += 1
+        return current_level
+
+    def __init__(self):
+        self.level_number = Level.new_level()
+        self.invaders_locations = []
         self.num_of_invaders = 0
         self.asteroids_probability = 0
+
+    def set_invader_locations(self, locations):
+        self.invaders_locations = locations
+
+    def get_invader_locations(self):
+        return self.invaders_locations
+
+    def get_level_number(self):
+        return self.level_number
 
     def set_num_of_invaders(self, num):
         self.num_of_invaders = num

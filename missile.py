@@ -13,7 +13,7 @@ class Missile(Interstellar):
         self.player = player
         self.speed = (0, Const.MISSILE_INITIAL_SPEED)
         self.width, self.height = self.images[0].get_rect().size
-        self.hitsize = pygame.Rect(0, 0, self.width, self.height - Const.MISSILE_FLAME_SIZE)
+        self.hitsize = (0, 0, self.width, self.height - Const.MISSILE_FLAME_SIZE)
         self.away = False
         self.next_frame = 0
         self.current_pic_num = 0
@@ -48,7 +48,7 @@ class Missile(Interstellar):
 
         # Check if we collide into anything
         for enemy in self.enemies.get_enemies():
-            if not self.on_board and self.hitbox.colliderect(enemy.hitbox):
+            if not self.on_board and pygame.Rect(self.hitbox).colliderect(enemy.hitbox):
                 self.away = True
                 enemy.hit()
 

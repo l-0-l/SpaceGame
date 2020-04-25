@@ -3,6 +3,7 @@ from enemies import Enemies
 from const import Const
 from random import randint
 from player import Player
+import pygame
 import enum
 
 
@@ -18,6 +19,7 @@ class Gameplay:
         self.num_of_levels = levels
         self.__setup_levels()
         self.initialize_level()
+        self.level_font = pygame.font.Font("res/PixelEmulator-xq08.ttf", 24)
 
     class Probability(enum.Enum):
         very_low = 100
@@ -133,3 +135,11 @@ class Gameplay:
         """
         self.enemies.draw()
         self.player.draw()
+        if not self.invaders_in_place:
+            level = self.player.font.render("Level " + str(self.level + 1), True, (255, 255, 255))
+            width, height = level.get_rect().size
+            level = pygame.transform.scale(level, (width * 4, height * 4))
+            width, height = level.get_rect().size
+            x = (Const.SCREEN_WIDTH - width) / 2
+            y = (Const.SCREEN_HEIGHT - height) / 2
+            self.screen.window.blit(level, (x, y))

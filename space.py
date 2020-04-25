@@ -2,11 +2,9 @@ from direction import Direction
 from screen import Screen
 from spaceship import Spaceship
 from missile import Missile
-from enemy import Enemy
 from const import Const
-from random import randint
+from gameplay import Gameplay
 from resources import Resources
-from invader import Invader
 import pygame
 
 
@@ -15,21 +13,19 @@ class Space(object):
         # Initialization
         pygame.init()
         self.screen = Screen()
+        self.game = Gameplay(self.screen)
 
         # There's one spaceship in this game
         self.spaceship = Spaceship(x=Const.INITIAL_X_POS, y=Const.INITIAL_Y_POS, screen=self.screen)
 
-        # For now, initialize a simple enemy here
-        self.enemy = Enemy(self.screen)
-
         # There are only two missiles in this game, the left one and the right one
         self.missile_left = Missile(player=self.spaceship,
                                     side=Direction.left,
-                                    enemy=self.enemy,
+                                    enemies=self.game.enemies,
                                     launch_sound=Resources.wav_launch)
         self.missile_right = Missile(player=self.spaceship,
                                      side=Direction.right,
-                                     enemy=self.enemy,
+                                     enemies=self.game.enemies,
                                      launch_sound=Resources.wav_launch)
 
         # Caption and icon
@@ -37,9 +33,7 @@ class Space(object):
         pic_logo = pygame.image.load("res/spaceship_N_00.png")
         pygame.display.set_icon(pic_logo)
 
-        self.num_of_invaders = 0
-
-        # Begin running :)
+        # Start running :)
         self.running = True
 
     def main(self):
@@ -64,8 +58,6 @@ class Space(object):
                         self.missile_left.launch()
                     if event.key == pygame.K_x:
                         self.missile_right.launch()
-                    if event.key == pygame.K_a:
-                        self.enemy.add_asteroid()
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_LEFT:
                         # Check the direction change is relevant
@@ -76,33 +68,26 @@ class Space(object):
                         if self.spaceship.get_direction() == Direction.right:
                             self.spaceship.set_direction(Direction.none)
 
-            # Calculate the next player location on the x axis
+            # Calculate the next locations of everything
             self.spaceship.move()
             self.missile_left.move()
             self.missile_right.move()
-            self.enemy.move()
+            self.game.run()
+            if self.game.end_level():
+                self.game.next_level()
 
-            # A bit of missile logic
+            # A bit of missile logic - reloading when off the screen
             if self.missile_left.is_away():
                 self.missile_left.reload()
             if self.missile_right.is_away():
                 self.missile_right.reload()
-
-            # Just randomly adding asteroids for fun
-            if randint(0, 30) == 0:
-                self.enemy.add_asteroid()
-
-            if Const.DEBUG:
-                if self.num_of_invaders == 0:
-                    self.enemy.add_invader()
-                    self.num_of_invaders += 1
 
             # Update the display
             self.screen.draw()
             self.missile_left.draw()
             self.missile_right.draw()
             self.spaceship.draw()
-            self.enemy.draw()
+            self.game.draw()
 
             pygame.display.update()
 

@@ -1,14 +1,13 @@
-from interstellar import Interstellar
+from enemy import Enemy
 from time import clock
 from const import Const
 from direction import Direction
 import math
-import pygame
 
 
-class Invader(Interstellar):
+class Invader(Enemy):
     def __init__(self, images, explode_images, explode_sounds, x, y, direction, speed):
-        super().__init__(images, speed=(0, 0), x=0, y=0)
+        super().__init__(images, (0, 0), explode_images, explode_sounds, Enemy.Type.invader, x=0, y=0)
         self.speed = speed
         self.x = x
         self.y = y
@@ -21,35 +20,37 @@ class Invader(Interstellar):
         self.num_of_explosion_frames = len(self.explode_images) - 1
         self.explode_sounds = explode_sounds
         self.num_of_explode_sounds = len(explode_sounds) - 1
-        self.frame_time = Const.ASTEROID_EXPLOSION_ANIMATE_SPEED
-        self.__resize_invaders()
+        self.frame_time = Const.EXPLOSION_ANIMATE_SPEED
+        self.images = self.rescale(images_source=self.original_images,
+                                   scale_x=Const.INVADER_SIZE,
+                                   scale_y=Const.INVADER_SIZE)  # Square invader
         self.current_image_set = self.images
         self.width, self.height = self.images[0].get_rect().size
         self.hitsize = tuple(map(sum, zip((0, 0, self.width, self.height, 0, 0), Const.INVADER_HITSIZE)))
         self.direction = direction
-        self.move_down_steps = Const.INVADER_CURVE
         self.move_down_track = []
         self.move_down_step = 0
-
-    def __resize_invaders(self):
-        self.images = []
-        for image in self.original_images:
-            self.images.append(pygame.transform.scale(image, (Const.INVADER_SIZE, Const.INVADER_SIZE)))
+        self.entry_finished = False
 
     def get_direction(self):
         return self.direction
 
+    def set_speed(self, speed):
+        self.speed = speed
+
     def __calculate_curve(self):
         self.move_down_track = []
-        n = self.move_down_steps
+        n = Const.INVADER_CURVE * math.pi / 2  # Half a circumference
         if self.x > Const.SCREEN_WIDTH // 2:
             sign = -1
         else:
             sign = 1
-        for i in range(0, n // 2 + 1):
+        i = 0
+        while i < int(n // 2 + 1):
             x = self.x + (math.cos(2 * math.pi / n * i + sign * math.pi / 2) * (n / 2))
             y = self.y + n // 2 + (math.sin(2 * math.pi / n * i + sign * math.pi / 2) * (n / 2))
             self.move_down_track.append((int(x), int(y)))
+            i += self.speed[0]
         if sign > 0:
             self.move_down_track.reverse()
 
@@ -65,10 +66,10 @@ class Invader(Interstellar):
     def move(self):
         if self.direction == Direction.left or self.direction == Direction.right:
             self.x += self.speed[0] * self.direction.value
-            if self.x - self.width / 2 > Const.INVADER_RIGHT_BORDER and self.direction == Direction.right or \
-                    self.x - self.width / 2 < Const.INVADER_LEFT_BORDER and self.direction == Direction.left:
-                self.set_direction(Direction.down)
-                print(self.x)
+            if self.x >= Const.INVADER_RIGHT_BORDER and self.direction == Direction.right or \
+                    self.x <= Const.INVADER_LEFT_BORDER and self.direction == Direction.left:
+                if not self.entry_finished:
+                    self.set_direction(Direction.down)
         elif self.direction == Direction.down:
             self.move_down_step += 1
             if self.move_down_step > len(self.move_down_track) - 1:

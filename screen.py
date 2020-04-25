@@ -22,7 +22,7 @@ class Screen:
                                    speed=(0, uniform(Const.STAR_SPEED_BRIGHT[0], Const.STAR_SPEED_BRIGHT[1])),
                                    x=randint(Const.STAR_COORD_APPEAR, Const.SCREEN_WIDTH),
                                    y=randint(Const.STAR_COORD_APPEAR, Const.SCREEN_HEIGHT)))
-        self.planet = Planet(images=Resources.planets[randint(0, len(Resources.planets) - 1)],
+        self.planet = Planet(images=[Resources.planets[randint(0, len(Resources.planets) - 1)]],
                              speed=(uniform(Const.PLANET_SPEED_X[0], Const.PLANET_SPEED_X[1]),
                                     uniform(Const.PLANET_SPEED_Y[0], Const.PLANET_SPEED_Y[1])))
         self.planet.set_xy(x=randint(-self.planet.width//2, Const.SCREEN_WIDTH-self.planet.width//2),

@@ -1,85 +1,49 @@
-from asteroid import Asteroid
-from invader import Invader
-from random import randint, uniform
+from interstellar import Interstellar
 from const import Const
-from resources import Resources
-from direction import Direction
-import pygame
+from random import randint
+import enum
 
 
-class Enemy:
-    def __init__(self, screen):
-        self.screen = screen
-        self.asteroids = []
-        self.invaders = []
+class Enemy(Interstellar):
+    def __init__(self, images, speed, explode_images, explode_sounds, enemy_type, x=0, y=0, *groups):
+        super().__init__(images, speed, x, y, *groups)
+        self.explode_images = explode_images
+        self.explode_sounds = explode_sounds
+        self.type = enemy_type
+        self.num_of_explosion_frames = len(self.explode_images) - 1
+        self.num_of_explode_sounds = len(explode_sounds) - 1
+        self.exploding = False
 
-    def add_asteroid(self):
+    class Type(enum.Enum):
+        asteroid = 0
+        invader = 1
+
+    def get_type(self):
         """
-        Adds a new asteroid with random values.
+        Returns the enemy type.
         """
-        speed_vertical = uniform(Const.ASTEROID_SPEED_VERTICAL_MIN, Const.ASTEROID_SPEED_VERTICAL_MAX)
-        speed_horizontal = uniform(Const.ASTEROID_SPEED_HORIZONTAL_MIN, Const.ASTEROID_SPEED_HORIZONTAL_MAX)
-        acc_vertical = uniform(Const.ASTEROID_ACCELERATION_VERTICAL_MIN, Const.ASTEROID_ACCELERATION_VERTICAL_MAX)
-        acc_horizontal = uniform(Const.ASTEROID_ACCELERATION_HORIZONTAL_MIN, Const.ASTEROID_ACCELERATION_HORIZONTAL_MAX)
-        asteroid = Asteroid(
-            images=Resources.asteroid1,
-            explode_images=Resources.explosion,
-            speed=(speed_horizontal, speed_vertical),
-            acceleration=(acc_horizontal, acc_vertical),
-            explode_sounds=Resources.wav_explosion
-        )
-        x = randint(Const.ASTEROID_BORDER_LEFT, Const.ASTEROID_BORDER_RIGHT - asteroid.get_width())
-        y = Const.ASTEROID_APPEAR_HEIGHT
-        asteroid.set_xy(x, y)
-        self.asteroids.append(asteroid)
+        return self.type
 
-    def add_invader(self):
-        invader = Invader(images=Resources.invader1,
-                          explode_images=Resources.explosion,
-                          explode_sounds=Resources.wav_explosion,
-                          x=550, y=100,
-                          direction=Direction.right,
-                          speed=(1, 0))
-        self.invaders.append(invader)
+    def is_hit(self):
+        """
+        Check whether the enemy is already hit.
+        """
+        return self.exploding
 
-    def move(self):
+    def hit(self):
         """
-        Moves all existing enemies.
+        Cause the enemy to become hit.
         """
-        to_remove = []
-        # Move all the asteroids
-        for asteroid in self.asteroids:
-            asteroid.move()
-            if asteroid.is_away():
-                to_remove.append(asteroid)
-            # This will blow up other asteroids within reach
-            if asteroid.is_hit():
-                for other_asteroid in self.asteroids:
-                    if not other_asteroid.is_hit() and asteroid.hitbox.colliderect(other_asteroid.hitbox):
-                        other_asteroid.hit()
-        # If some asteroids have moved away from the screen, they must be removed
-        for asteroid in to_remove:
-            self.asteroids.remove(asteroid)
-
-        to_remove = []
-        # Move all invaders
-        for invader in self.invaders:
-            invader.move()
-            if invader.is_away():
-                to_remove.append(invader)
-        # If some invaders have moved away from the screen, they must be removed
-        for invader in to_remove:
-            self.invaders.remove(invader)
-
-    def draw(self):
-        """
-        Draws all existing enemies.
-        """
-        for asteroid in self.asteroids:
-            self.screen.window.blit(asteroid.get_current_pic(), asteroid.get_xy())
-            if Const.DEBUG:
-                pygame.draw.rect(self.screen.window, (255, 0, 0), asteroid.get_hitbox(), 1)
-        for invader in self.invaders:
-            self.screen.window.blit(invader.get_current_pic(), invader.get_xy())
-            if Const.DEBUG:
-                pygame.draw.rect(self.screen.window, (255, 0, 0), invader.get_hitbox(), 1)
+        self.exploding = True
+        self.frame_num = 0
+        self.frame_time = Const.EXPLOSION_ANIMATE_SPEED
+        self.current_image_set = self.explode_images
+        orig_width = self.width
+        orig_height = self.height
+        self.width, self.height = self.current_image_set[0].get_rect().size
+        self.x = self.x - self.width // 2 + orig_width // 2
+        self.y = self.y - self.height // 2 + orig_height // 2
+        self.hitsize = (Const.EXPLOSION_HIT_DELTA, Const.EXPLOSION_HIT_DELTA,
+                        self.width - Const.EXPLOSION_HIT_DELTA, self.height - Const.EXPLOSION_HIT_DELTA)
+        sound = self.explode_sounds[randint(0, self.num_of_explode_sounds)]
+        sound.play()

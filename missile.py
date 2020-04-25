@@ -8,7 +8,7 @@ import pygame
 
 
 class Missile(Interstellar):
-    def __init__(self, player, side, enemy, launch_sound):
+    def __init__(self, player, side, enemies, launch_sound):
         super().__init__(Resources.missile, speed=0, x=0, y=0)
         self.player = player
         self.speed = (0, Const.MISSILE_INITIAL_SPEED)
@@ -19,7 +19,7 @@ class Missile(Interstellar):
         self.current_pic_num = 0
         self.on_board = True
         self.side = side
-        self.enemy = enemy
+        self.enemies = enemies
         self.launch_sound = launch_sound[0]
         self.x = 0
         self.y = 0
@@ -47,10 +47,10 @@ class Missile(Interstellar):
         super().move()
 
         # Check if we collide into anything
-        for asteroid in self.enemy.asteroids:
-            if not self.on_board and self.hitbox.colliderect(asteroid.hitbox):
+        for enemy in self.enemies.get_enemies():
+            if not self.on_board and self.hitbox.colliderect(enemy.hitbox):
                 self.away = True
-                asteroid.hit()
+                enemy.hit()
 
     def get_current_pic(self):
         """

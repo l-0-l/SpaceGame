@@ -15,6 +15,14 @@ class Interstellar(pygame.sprite.Sprite):
         self.away = False
         self.hitbox = (0, 0, 0, 0)
         self.hitsize = (0, 0, 0, 0)
+        if self.images:
+            self.num_of_images = len(self.images)
+        else:
+            self.num_of_images = 0
+        self.frame_time = Const.FRAME_TIME_SEC
+        self.next_frame = 0
+        self.frame_num = 0
+        self.current_image_set = self.images
 
     def get_xy(self):
         """
@@ -39,13 +47,14 @@ class Interstellar(pygame.sprite.Sprite):
         """
         Move the object.
         """
-        self.hitbox = pygame.Rect(tuple(map(sum, zip((self.x, self.y, 0, 0), self.hitsize))))
+        self.hitbox = pygame.Rect(tuple(map(sum, zip((self.x, self.y, -self.hitsize[0], -self.hitsize[1]),
+                                                     self.hitsize))))
 
     def get_current_pic(self):
         """
         Return the current picture.
         """
-        return self.images
+        return self.images[self.frame_num]
 
     def is_away(self):
         """
@@ -64,6 +73,16 @@ class Interstellar(pygame.sprite.Sprite):
         Return object's height.
         """
         return self.height
+
+    @staticmethod
+    def rescale(images_source, scale_x, scale_y):
+        """
+        Rescale images
+        """
+        images_target = []
+        for image in images_source:
+            images_target.append(pygame.transform.scale(image, (scale_x, scale_y)))
+        return images_target
 
     def off_the_screen(self):
         """

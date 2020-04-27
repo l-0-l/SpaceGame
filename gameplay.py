@@ -9,15 +9,15 @@ import enum
 
 
 class Gameplay:
-    def __init__(self, screen, levels=5):
-        self.level = 4
+    def __init__(self, screen):
+        self.level = 0
         self.levels = []
         self.screen = screen
         self.level_initialized = False
         self.enemies = Enemies(self)
         self.player = Player(self)
         self.invaders_in_place = False
-        self.num_of_levels = levels
+        self.num_of_levels = 10
         self.__setup_levels()
         self.initialize_level()
         self.level_font = pygame.font.Font("res/PixelEmulator-xq08.ttf", 24)
@@ -40,17 +40,32 @@ class Gameplay:
         self.levels[0].set_invader_locations(Gameplay.__layout_invaders(1, 5))
         self.levels[0].set_asteroids_probability(self.Probability.very_low)
         # Level two
-        self.levels[1].set_invader_locations(Gameplay.__layout_invaders(2, 5))
-        self.levels[1].set_asteroids_probability(self.Probability.low)
+        self.levels[1].set_invader_locations(Gameplay.__layout_invaders(1, 6))
+        self.levels[1].set_asteroids_probability(self.Probability.very_low)
         # Level three
-        self.levels[2].set_invader_locations(Gameplay.__layout_invaders(3, 5))
-        self.levels[2].set_asteroids_probability(self.Probability.medium)
+        self.levels[2].set_invader_locations(Gameplay.__layout_invaders(2, 5))
+        self.levels[2].set_asteroids_probability(self.Probability.low)
         # Level four
-        self.levels[3].set_invader_locations(Gameplay.__layout_invaders(4, 5))
-        self.levels[3].set_asteroids_probability(self.Probability.high)
+        self.levels[3].set_invader_locations(Gameplay.__layout_invaders(2, 6))
+        self.levels[3].set_asteroids_probability(self.Probability.low)
         # Level five
-        self.levels[4].set_invader_locations(Gameplay.__layout_invaders(5, 5))
-        self.levels[4].set_asteroids_probability(self.Probability.very_high)
+        self.levels[4].set_invader_locations(Gameplay.__layout_invaders(3, 5))
+        self.levels[4].set_asteroids_probability(self.Probability.medium)
+        # Level six
+        self.levels[5].set_invader_locations(Gameplay.__layout_invaders(3, 6))
+        self.levels[5].set_asteroids_probability(self.Probability.medium)
+        # Level seven
+        self.levels[6].set_invader_locations(Gameplay.__layout_invaders(4, 5))
+        self.levels[6].set_asteroids_probability(self.Probability.high)
+        # Level eight
+        self.levels[7].set_invader_locations(Gameplay.__layout_invaders(4, 6))
+        self.levels[7].set_asteroids_probability(self.Probability.high)
+        # Level nine
+        self.levels[8].set_invader_locations(Gameplay.__layout_invaders(5, 5))
+        self.levels[8].set_asteroids_probability(self.Probability.very_high)
+        # Level ten
+        self.levels[9].set_invader_locations(Gameplay.__layout_invaders(5, 6))
+        self.levels[9].set_asteroids_probability(self.Probability.very_high)
 
     @staticmethod
     def __layout_invaders(lines, columns):

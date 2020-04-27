@@ -90,7 +90,7 @@ class Missile(Interstellar):
         Launch the missile - means detach it from the spaceship
         """
         if self.on_board:
-            # Set the missile angle
+            # Set the missile angle depending on direction
             angle = -self.speed[0]*3
             if abs(angle) > 1:
                 self.images = []

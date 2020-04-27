@@ -10,9 +10,8 @@ from pygame import draw
 
 class Spaceship(Interstellar):
     """
-    This class is a singleton, as in this game only one spaceship can exist.
+    This class is a singleton, as in this game only one spaceship can exist
     """
-
     __instance = None
 
     def __init__(self, x, y, screen):
@@ -33,13 +32,13 @@ class Spaceship(Interstellar):
 
     def set_direction(self, direction):
         """
-        Set acceleration according to the direction.
+        Set acceleration according to the direction
         """
         self.current_acceleration = direction.value * Const.SPACESHIP_ACCELERATION
 
     def move(self):
         """
-        Move the player for each cycle, making sure we don't go past the walls.
+        Move the player for each cycle, making sure we don't go past the walls
         """
         # Accelerate/decelerate
         if self.current_acceleration != 0:
@@ -69,7 +68,7 @@ class Spaceship(Interstellar):
 
     def get_direction(self):
         """
-        Returns the spaceship's direction.
+        Return the spaceship's direction.
         Actually, the direction concept is a bit tricky. This method returns the direction
         the user wants to move to, even if currently he moves in the opposite direction,
         but if no button is pressed - the actual moving direction is returned.
@@ -88,7 +87,7 @@ class Spaceship(Interstellar):
 
     def get_current_pic(self):
         """
-        Returns the current spaceship image.
+        Return the current spaceship image
         """
         # The current picture is determined by the spaceship speed
         num_pic = abs(round(self.current_speed / Const.SPACESHIP_ANIMATION_TO_SPEED_RATIO))
@@ -128,7 +127,7 @@ class Spaceship(Interstellar):
 
     def get_xy(self):
         """
-        Returns the position
+        Return the position
         """
         return self.x, self.y
 

@@ -13,7 +13,11 @@ class Space(object):
         # Initialization
         pygame.init()
         self.clock = pygame.time.Clock()
+
+        # Screen class holds the actual window and whatever's in the background, like stars and planets
         self.screen = Screen()
+
+        # The Gameplay class holds the main game business logic
         self.game = Gameplay(self.screen)
 
         # There's one spaceship in this game

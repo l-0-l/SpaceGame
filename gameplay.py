@@ -10,7 +10,7 @@ import enum
 
 class Gameplay:
     def __init__(self, screen, levels=5):
-        self.level = 0
+        self.level = 4
         self.levels = []
         self.screen = screen
         self.level_initialized = False
@@ -46,10 +46,10 @@ class Gameplay:
         self.levels[2].set_invader_locations(Gameplay.__layout_invaders(3, 5))
         self.levels[2].set_asteroids_probability(self.Probability.medium)
         # Level four
-        self.levels[3].set_invader_locations(Gameplay.__layout_invaders(4, 6))
+        self.levels[3].set_invader_locations(Gameplay.__layout_invaders(4, 5))
         self.levels[3].set_asteroids_probability(self.Probability.high)
         # Level five
-        self.levels[4].set_invader_locations(Gameplay.__layout_invaders(5, 6))
+        self.levels[4].set_invader_locations(Gameplay.__layout_invaders(5, 5))
         self.levels[4].set_asteroids_probability(self.Probability.very_high)
 
     @staticmethod

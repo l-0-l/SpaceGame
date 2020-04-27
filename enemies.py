@@ -21,7 +21,7 @@ class Enemies:
 
     def add_asteroid(self):
         """
-        Add a new asteroid with random values.
+        Add a new asteroid with random values
         """
         speed_vertical = uniform(Const.ASTEROID_SPEED_VERTICAL_MIN, Const.ASTEROID_SPEED_VERTICAL_MAX)
         speed_horizontal = uniform(Const.ASTEROID_SPEED_HORIZONTAL_MIN, Const.ASTEROID_SPEED_HORIZONTAL_MAX)
@@ -41,7 +41,7 @@ class Enemies:
 
     def add_invader(self, x, y, speed):
         """
-        Add an invader to enemies, converting the provided parameters.
+        Add an invader to enemies, converting the provided parameters
         """
         invader = Invader(images=Resources.invader1,
                           explode_images=Resources.explosion,
@@ -54,7 +54,7 @@ class Enemies:
 
     def invaders_arrived(self):
         """
-        The invaders have reached their nominal height.
+        The invaders have reached their nominal height
         """
         if randint(0, 1) == 0:
             direction = Direction.right
@@ -65,7 +65,7 @@ class Enemies:
 
     def all_invaders_appeared(self):
         """
-        Check if all invaders already appear on the screen.
+        Check if all invaders already appear on the screen
         """
         for invader in self.invaders:
             if invader.get_xy()[1] < Const.INVADER_TOP_BORDER:
@@ -74,13 +74,13 @@ class Enemies:
 
     def current_number_of_invaders(self):
         """
-        Return the remaining number of invaders.
+        Return the remaining number of invaders
         """
         return len(self.invaders)
 
     def move(self):
         """
-        Move all existing enemies.
+        Move all existing enemies
         """
         enemies = self.get_enemies()
         to_remove = []
@@ -118,7 +118,7 @@ class Enemies:
 
     def draw(self):
         """
-        Draw all existing enemies.
+        Draw all existing enemies
         """
         for asteroid in self.asteroids:
             self.game.screen.window.blit(asteroid.get_current_pic(), asteroid.get_xy())

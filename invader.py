@@ -26,7 +26,6 @@ class Invader(Enemy):
         self.descend_steps = descend_steps
         self.descend_step = 0
         self.descend_speed = descend_speed
-        self.move_aside_step = 0
         self.horizontal_speed = horizontal_speed
         self.descend_finished = True
         self.entry_finished = False
@@ -35,30 +34,50 @@ class Invader(Enemy):
         self.score = 100
 
     def set_speed(self, speed):
+        """
+        Set invader speed (tuple)
+        """
         self.speed = speed
 
     def move_aside(self, direction):
-        self.move_aside_step = 0
+        """
+        Horizontal invader movement
+        """
         self.horizontal_speed *= direction.value
         self.speed = (self.horizontal_speed, 0)
 
     def swap_direction(self):
+        """
+        Start moving to the other horizontal direction
+        """
         self.horizontal_speed = -self.horizontal_speed
 
     def descend(self):
+        """
+        Invader will begin descent, i.e. moving down
+        """
         self.descend_step = 0
         self.descend_finished = False
         self.speed = (0, self.descend_speed)
 
     def get_descend_finished(self):
+        """
+        Return whether the descend has finished
+        """
         return self.descend_finished
 
     def arrived(self, direction):
+        """
+        Command the invader that it arrived to the starting position on the screen
+        """
         self.entry_finished = True
         self.allow_off_the_screen = False
         self.move_aside(direction)
 
     def move(self):
+        """
+        Move the invader according to its direction and state
+        """
         if self.entry_finished:
             if not self.descend_finished:
                 self.descend_step += 1
@@ -68,6 +87,9 @@ class Invader(Enemy):
         super().move()
 
     def get_current_pic(self):
+        """
+        Return the current image of the invader
+        """
         if clock() > self.next_frame:
             if self.exploding:
                 if self.frame_num < self.num_of_explosion_frames:
@@ -77,11 +99,11 @@ class Invader(Enemy):
             else:
                 self.frame_num += self.frame_direction
                 if self.frame_num > self.num_of_images:
-                    self.frame_direction = - self.frame_direction
+                    self.frame_direction = -self.frame_direction
                     # The last frame will be shown twice, for showing it once multiply the direction by 2 below.
                     self.frame_num += self.frame_direction
                 elif self.frame_num < 0:
-                    self.frame_direction = - self.frame_direction
+                    self.frame_direction = -self.frame_direction
                     # The first frame will be shown twice, for showing it once multiply the direction by 2 below.
                     self.frame_num += self.frame_direction
             self.next_frame = clock() + self.frame_time

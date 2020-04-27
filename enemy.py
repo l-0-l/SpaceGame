@@ -44,13 +44,13 @@ class Enemy(Interstellar):
 
     def is_hit(self):
         """
-        Check whether the enemy is already hit.
+        Check whether the enemy is already hit
         """
         return self.exploding
 
     def hit(self):
         """
-        Cause the enemy to become hit.
+        Cause the enemy to become hit
         """
         self.exploding = True
         self.frame_num = 0

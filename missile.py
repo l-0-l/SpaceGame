@@ -4,7 +4,6 @@ from direction import Direction
 from resources import Resources
 from const import Const
 from interstellar import Interstellar
-from gameplay import Gameplay
 import pygame
 
 
@@ -29,7 +28,7 @@ class Missile(Interstellar):
     def move(self):
         """
         If the missile is on board, it will be moving with the spaceship
-        on the x axis, and when fired - it will move on the y axis.
+        on the x axis, and when fired - it will move on the y axis
         """
         if self.on_board:
             # The missile is on board
@@ -59,7 +58,7 @@ class Missile(Interstellar):
 
     def get_current_pic(self):
         """
-        Return the current missile image.
+        Return the current missile image
         """
         if self.on_board:
             # The picture is static, without flame
@@ -77,7 +76,7 @@ class Missile(Interstellar):
     @staticmethod
     def rotate(image, angle):
         """
-        Rotate an image while keeping its center and size.
+        Rotate an image while keeping its center and size
         """
         orig_rect = image.get_rect()
         rot_image = pygame.transform.rotate(image, angle)
@@ -88,7 +87,7 @@ class Missile(Interstellar):
 
     def launch(self):
         """
-        Launch the missile - means detach it from the spaceship.
+        Launch the missile - means detach it from the spaceship
         """
         if self.on_board:
             # Set the missile angle
@@ -102,7 +101,7 @@ class Missile(Interstellar):
 
     def reload(self):
         """
-        Reset the missile status, and attach it back to the spaceship.
+        Reset the missile status, and attach it back to the spaceship
         """
         self.on_board = True
         self.away = False
@@ -111,7 +110,7 @@ class Missile(Interstellar):
 
     def draw(self):
         """
-        Draws the missile.
+        Draw the missile
         """
         self.spaceship.screen.window.blit(self.get_current_pic(), self.get_xy())
         if Const.DEBUG:

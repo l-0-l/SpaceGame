@@ -2,7 +2,7 @@ import pygame
 from const import Const
 
 
-class Interstellar():
+class Interstellar:
     def __init__(self, images, speed, x=0, y=0):
         self.original_images = images
         self.images = self.original_images
@@ -12,10 +12,7 @@ class Interstellar():
         self.away = False
         self.hitbox = (0, 0, 0, 0)
         self.hitsize = (0, 0, 0, 0)
-        if self.images:
-            self.num_of_images = len(self.images)
-        else:
-            self.num_of_images = 0
+        self.num_of_images = len(self.images) if self.images else 0
         self.frame_time = Const.FRAME_TIME_SEC
         self.next_frame = 0
         self.frame_num = 0
@@ -24,50 +21,52 @@ class Interstellar():
 
     def get_xy(self):
         """
-        Returns the position.
+        Return the position
         """
         return self.x, self.y
 
     def get_hitbox(self):
         """
-        Returns the hitbox.
+        Return the hitbox
         """
         return self.hitbox
 
     def set_xy(self, x, y):
         """
-        Set the position.
+        Set the position
         """
         self.x = x
         self.y = y
 
     def move(self):
         """
-        Move the object.
+        Move the hitbox, if exists
         """
-        self.hitbox = tuple(map(sum, zip((self.x, self.y, -self.hitsize[0], -self.hitsize[1]), self.hitsize)))
+        # Move the hitbox only if the hit size is > 0
+        if self.hitsize[2] != 0:
+            self.hitbox = tuple(map(sum, zip((self.x, self.y, -self.hitsize[0], -self.hitsize[1]), self.hitsize)))
 
     def get_current_pic(self):
         """
-        Return the current picture.
+        Return the current picture
         """
         return self.images[self.frame_num]
 
     def is_away(self):
         """
-        Return true if the object is off the screen.
+        Return true if the object is off the screen
         """
         return self.away
 
     def get_width(self):
         """
-        Return object's width.
+        Return object's width
         """
         return self.width
 
     def get_height(self):
         """
-        Return object's height.
+        Return object's height
         """
         return self.height
 

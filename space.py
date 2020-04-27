@@ -38,10 +38,14 @@ class Space(object):
 
         # Start running :)
         self.running = True
+
+        # Even though the default initialization has been performed, this will pop up the first level number
         self.game.initialize_level()
 
     def main(self):
-        """ Main game loop """
+        """
+        Main game loop lives here
+        """
 
         while self.running:
             self.clock.tick(60)

@@ -4,22 +4,18 @@ from const import Const
 
 
 class Invader(Enemy):
-    def __init__(self, images, explode_images, explode_sounds, x, y,
+    def __init__(self, images, x, y,
                  descend_speed, horizontal_speed, descend_steps):
-        super().__init__(images, (0, 0), explode_images, explode_sounds, x=x, y=y)
-        self.num_of_images = len(self.images) - 1
+        super().__init__(images=images, speed=(0, 0), x=x, y=y)
         self.next_frame = 0
         self.frame_num = 0
         self.frame_direction = 1
         self.exploding = False
-        self.explode_images = explode_images
-        self.num_of_explosion_frames = len(self.explode_images) - 1
-        self.explode_sounds = explode_sounds
-        self.num_of_explode_sounds = len(explode_sounds) - 1
         self.frame_time = Const.EXPLOSION_ANIMATE_SPEED
         self.images = self.rescale(images_source=self.original_images,
                                    scale_x=Const.INVADER_SIZE,
                                    scale_y=Const.INVADER_SIZE)  # Square invader
+        self.num_of_images = len(self.images) - 1
         self.current_image_set = self.images
         self.width, self.height = self.images[0].get_rect().size
         self.hitsize = tuple(map(sum, zip((0, 0, self.width, self.height), Const.INVADER_HITSIZE)))

@@ -4,10 +4,10 @@ import pygame
 
 
 class Player:
-    def __init__(self, game):
+    def __init__(self, screen):
         self.lives = Const.PLAYER_LIVES
         self.score = 0
-        self.game = game
+        self.screen = screen
         self.image = pygame.transform.scale(Resources.ship_move_right[0],
                                             (Const.PLAYER_LIVE_SIZE, Const.PLAYER_LIVE_SIZE))
         self.image_width, _ = self.image.get_rect().size
@@ -38,6 +38,6 @@ class Player:
         for i in range(self.lives):
             shift = i * self.image_width * 1.2
             position = tuple(map(sum, zip((shift, 0), Const.PLAYER_LIVES_POSITION)))
-            self.game.screen.window.blit(self.image, position)
+            self.screen.window.blit(self.image, position)
         score = self.font.render(str(self.score).zfill(6), True, (255, 255, 255))
-        self.game.screen.window.blit(score, Const.PLAYER_SCORE_POSITION)
+        self.screen.window.blit(score, Const.PLAYER_SCORE_POSITION)

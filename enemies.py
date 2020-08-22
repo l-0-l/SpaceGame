@@ -16,11 +16,10 @@ class Enemies:
           destroyed
     """
 
-    def __init__(self, game, spaceship):
+    def __init__(self, game):
         self.game = game
         self.asteroids = []
         self.invaders = []
-        self.spaceship = spaceship
 
     def get_enemies(self):
         """
@@ -36,16 +35,15 @@ class Enemies:
         speed_horizontal = uniform(Const.ASTEROID_SPEED_HORIZONTAL_MIN, Const.ASTEROID_SPEED_HORIZONTAL_MAX)
         acc_vertical = uniform(Const.ASTEROID_ACCELERATION_VERTICAL_MIN, Const.ASTEROID_ACCELERATION_VERTICAL_MAX)
         acc_horizontal = uniform(Const.ASTEROID_ACCELERATION_HORIZONTAL_MIN, Const.ASTEROID_ACCELERATION_HORIZONTAL_MAX)
+        x = randint(Const.ASTEROID_BORDER_LEFT, Const.ASTEROID_BORDER_RIGHT)
+        y = Const.ASTEROID_APPEAR_HEIGHT
         asteroid = Asteroid(
             images=Resources.asteroid1,
-            explode_images=Resources.explosion,
             speed=(speed_horizontal, speed_vertical),
             acceleration=(acc_horizontal, acc_vertical),
-            explode_sounds=Resources.wav_explosion
+            x=x,
+            y=y
         )
-        x = randint(Const.ASTEROID_BORDER_LEFT, Const.ASTEROID_BORDER_RIGHT - asteroid.get_width())
-        y = Const.ASTEROID_APPEAR_HEIGHT
-        asteroid.set_xy(x, y)
         self.asteroids.append(asteroid)
 
     def add_invader(self, x, y, speed):
@@ -53,8 +51,6 @@ class Enemies:
         Add an invader to enemies, converting the provided parameters
         """
         invader = Invader(images=Resources.invader1,
-                          explode_images=Resources.explosion,
-                          explode_sounds=Resources.wav_explosion,
                           x=x, y=y,
                           descend_speed=speed,
                           horizontal_speed=speed,
@@ -100,10 +96,6 @@ class Enemies:
             # Check if the enemy is off the screen, it should be removed
             if enemy.is_away():
                 to_remove.append(enemy)
-            # TODO: spaceship death
-            # if pygame.Rect(enemy.hitbox).colliderect(self.spaceship.hitbox):
-            #    enemy.hit()
-            # self.spaceship.hit()
             # Check if we need to change the direction of the invaders
             if isinstance(enemy, Invader):
                 horizontal_location, _ = enemy.get_xy()

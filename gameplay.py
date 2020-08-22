@@ -19,7 +19,7 @@ class Gameplay:
         self.screen = screen
         self.level_initialized = False
         self.spaceship = self.spaceship = Spaceship(x=Const.INITIAL_X_POS, y=Const.INITIAL_Y_POS, screen=self.screen)
-        self.enemies = Enemies(self, self.spaceship)
+        self.enemies = Enemies(self)
         self.missile_left = Missile(spaceship=self.spaceship,
                                     side=Direction.left,
                                     enemies=self.enemies,
@@ -28,7 +28,7 @@ class Gameplay:
                                      side=Direction.right,
                                      enemies=self.enemies,
                                      game=self)
-        self.player = Player(self)
+        self.player = Player(self.screen)
         self.invaders_in_place = False
         self.num_of_levels = 10
         self.__setup_levels()
@@ -110,6 +110,7 @@ class Gameplay:
         """
         Add a score for hitting an enemy
         """
+        # The farther the enemy was from the player, the more score he gets for shooting it
         self.player.add_score(enemy.score + int((Const.SCREEN_HEIGHT - enemy.get_xy()[1]) / 10))
 
     def initialize_level(self):
@@ -117,7 +118,7 @@ class Gameplay:
         Initialize a new level
         """
         if self.level == self.num_of_levels:
-            # Game end - this is a very sad ending...
+            # TODO: this is a very sad ending...
             exit(0)
         if not self.level_initialized:
             self.level_initialized = True
@@ -130,7 +131,7 @@ class Gameplay:
 
     def end_level(self):
         """
-        Returns true if the current level ended (when no invaders are left)
+        Returns true if the current level ended (no invaders left alive)
         """
         if self.enemies.current_number_of_invaders() > 0:
             return False
@@ -144,6 +145,13 @@ class Gameplay:
             self.level += 1
             self.invaders_in_place = False
             self.initialize_level()
+
+    def is_spaceship_hit(self):
+        for enemy in self.enemies.get_enemies():
+            if pygame.Rect(enemy.hitbox).colliderect(self.spaceship.hitbox):
+                if not enemy.is_hit():
+                    enemy.hit()
+                self.spaceship.hit()
 
     def run(self):
         """
@@ -180,7 +188,7 @@ class Gameplay:
 
     def handle_events(self):
         """
-        Handle all game events
+        Handle all game events, mostly keypress
         """
         for event in pygame.event.get():
             # Exit event
@@ -210,7 +218,7 @@ class Gameplay:
 
     def draw(self):
         """
-        Draw everything, including player-related data
+        Draw everything, including static player-related data
         """
         self.screen.draw()
         self.enemies.draw()

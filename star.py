@@ -5,7 +5,7 @@ from interstellar import Interstellar
 
 class Star(Interstellar):
     def __init__(self, images, speed, x, y):
-        super().__init__(images, speed, x, y)
+        super().__init__(images=images, speed=speed, x=x, y=y)
         self.animate_in_progress = False
         self.animation_frame = 0
 

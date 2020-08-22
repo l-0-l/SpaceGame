@@ -6,8 +6,8 @@ from time import clock
 
 
 class Asteroid(Enemy):
-    def __init__(self, images, explode_images, speed, acceleration, explode_sounds, x=0, y=0):
-        super().__init__(images, speed, explode_images, explode_sounds, x, y)
+    def __init__(self, images, speed, acceleration, x=0, y=0):
+        super().__init__(images=images, speed=speed, x=x, y=y)
         self.__set_asteroid_random_size()
         self.current_image_set = self.images
         self.width, self.height = self.images[0].get_rect().size

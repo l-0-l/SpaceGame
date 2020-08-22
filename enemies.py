@@ -15,10 +15,12 @@ class Enemies:
         * Invaders are the ugly enemies from outer space, destroy them or be
           destroyed
     """
-    def __init__(self, game):
+
+    def __init__(self, game, spaceship):
         self.game = game
         self.asteroids = []
         self.invaders = []
+        self.spaceship = spaceship
 
     def get_enemies(self):
         """
@@ -98,6 +100,10 @@ class Enemies:
             # Check if the enemy is off the screen, it should be removed
             if enemy.is_away():
                 to_remove.append(enemy)
+            # TODO: spaceship death
+            # if pygame.Rect(enemy.hitbox).colliderect(self.spaceship.hitbox):
+            #    enemy.hit()
+            # self.spaceship.hit()
             # Check if we need to change the direction of the invaders
             if isinstance(enemy, Invader):
                 horizontal_location, _ = enemy.get_xy()
@@ -111,12 +117,12 @@ class Enemies:
                     if not other_enemy.is_hit() and pygame.Rect(enemy.hitbox).colliderect(other_enemy.hitbox):
                         other_enemy.hit()
                         self.game.add_score(other_enemy)
-        # At least one invader has crossed the border, and all must go in the opposite direction
+        # At least one invader has crossed the side border, and all reverse direction
         if direction_swap_needed:
             for invader in self.invaders:
                 invader.descend()
                 invader.swap_direction()
-        # If some enemies have moved away from the screen, they must be removed
+        # If some enemies have moved off the screen, they must be removed
         for enemy in to_remove:
             if isinstance(enemy, Asteroid):
                 self.asteroids.remove(enemy)

@@ -1,5 +1,8 @@
 from level import Level
 from enemies import Enemies
+from spaceship import Spaceship
+from missile import Missile
+from direction import Direction
 from const import Const
 from random import randint
 from player import Player
@@ -9,12 +12,22 @@ import enum
 
 
 class Gameplay:
-    def __init__(self, screen):
+    def __init__(self, game, screen):
+        self.game = game
         self.level = 0
         self.levels = []
         self.screen = screen
         self.level_initialized = False
-        self.enemies = Enemies(self)
+        self.spaceship = self.spaceship = Spaceship(x=Const.INITIAL_X_POS, y=Const.INITIAL_Y_POS, screen=self.screen)
+        self.enemies = Enemies(self, self.spaceship)
+        self.missile_left = Missile(spaceship=self.spaceship,
+                                    side=Direction.left,
+                                    enemies=self.enemies,
+                                    game=self)
+        self.missile_right = Missile(spaceship=self.spaceship,
+                                     side=Direction.right,
+                                     enemies=self.enemies,
+                                     game=self)
         self.player = Player(self)
         self.invaders_in_place = False
         self.num_of_levels = 10
@@ -134,8 +147,9 @@ class Gameplay:
 
     def run(self):
         """
-        Game running logic, related to enemies
+        Game running logic
         """
+        # Enemies
         # Invaders may be still entering the screen
         if not self.invaders_in_place:
             if self.enemies.all_invaders_appeared():
@@ -147,12 +161,64 @@ class Gameplay:
         # Move all enemies
         self.enemies.move()
 
+        # Spaceship
+        # Calculate the next locations of everything
+        self.spaceship.move()
+        self.missile_left.move()
+        self.missile_right.move()
+
+        # Missiles
+        # A bit of missile logic - reloading when off the screen
+        if self.missile_left.is_away():
+            self.missile_left.reload()
+        if self.missile_right.is_away():
+            self.missile_right.reload()
+
+        # Game
+        if self.end_level():
+            self.next_level()
+
+    def handle_events(self):
+        """
+        Handle all game events
+        """
+        for event in pygame.event.get():
+            # Exit event
+            if event.type == pygame.QUIT:
+                self.game.quit()
+            # Respond to keys
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.game.quit()
+                if event.key == pygame.K_LEFT:
+                    self.spaceship.set_direction(Direction.left)
+                if event.key == pygame.K_RIGHT:
+                    self.spaceship.set_direction(Direction.right)
+                if event.key == pygame.K_z:
+                    self.missile_left.launch()
+                if event.key == pygame.K_x:
+                    self.missile_right.launch()
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_LEFT:
+                    # Check if a direction change is relevant
+                    if self.spaceship.get_direction() == Direction.left:
+                        self.spaceship.set_direction(Direction.none)
+                elif event.key == pygame.K_RIGHT:
+                    # Check if a direction change is relevant
+                    if self.spaceship.get_direction() == Direction.right:
+                        self.spaceship.set_direction(Direction.none)
+
     def draw(self):
         """
-        Draw all enemies and player-related data
+        Draw everything, including player-related data
         """
+        self.screen.draw()
         self.enemies.draw()
         self.player.draw()
+        self.missile_left.draw()
+        self.missile_right.draw()
+        self.spaceship.draw()
+
         if clock() < self.notification_time:
             level = self.player.font.render("Level " + str(self.level + 1), True, (255, 255, 255))
             width, height = level.get_rect().size

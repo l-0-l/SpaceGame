@@ -8,7 +8,7 @@ import pygame
 
 
 class Missile(Interstellar):
-    def __init__(self, spaceship, side, enemies, launch_sound, game):
+    def __init__(self, spaceship, side, enemies, game):
         super().__init__(Resources.missile, speed=0, x=0, y=0)
         self.spaceship = spaceship
         self.speed = (0, Const.MISSILE_INITIAL_SPEED)
@@ -20,7 +20,7 @@ class Missile(Interstellar):
         self.on_board = True
         self.side = side
         self.enemies = enemies
-        self.launch_sound = launch_sound[0]
+        self.launch_sound = Resources.wav_launch[0]
         self.x = 0
         self.y = 0
         self.game = game
@@ -28,7 +28,7 @@ class Missile(Interstellar):
     def move(self):
         """
         If the missile is on board, it will be moving with the spaceship
-        on the x axis, and when fired - it will move on the y axis
+        on the x axis, and when fired - it will move on the y axis as well
         """
         if self.on_board:
             # The missile is on board

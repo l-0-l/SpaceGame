@@ -19,12 +19,12 @@ class Resources:
                       pygame.image.load("res/spaceship_L_05.png"),
                       pygame.image.load("res/spaceship_L_06.png")]
 
-    missile = [pygame.image.load("res/missile_00.png"),
-               pygame.image.load("res/missile_01.png"),
-               pygame.image.load("res/missile_02.png"),
-               pygame.image.load("res/missile_03.png"),
-               pygame.image.load("res/missile_04.png"),
-               pygame.image.load("res/missile_05.png")]
+    rocket = [pygame.image.load("res/rocket_00.png"),
+              pygame.image.load("res/rocket_01.png"),
+              pygame.image.load("res/rocket_02.png"),
+              pygame.image.load("res/rocket_03.png"),
+              pygame.image.load("res/rocket_04.png"),
+              pygame.image.load("res/rocket_05.png")]
 
     flame = [pygame.image.load("res/flame_01.png"),
              pygame.image.load("res/flame_02.png"),

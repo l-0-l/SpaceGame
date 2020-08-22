@@ -14,13 +14,13 @@ class Const:
 
     FRAME_TIME_SEC = 0.1
 
-    MISSILE_INITIAL_SPEED = 0.0
-    MISSILE_ACCELERATION = 0.3
-    MISSILE_STOWED_OFFSET_X_LEFT = 18
-    MISSILE_STOWED_OFFSET_X_RIGHT = 48
-    MISSILE_STOWED_OFFSET_Y = 32
-    MISSILE_FLAME_SIZE = 12
-    MISSILE_HORIZONTAL_SPEED_DELTA = 6  # The lower - the closer the missile horizontal speed to the spaceship's one
+    ROCKET_INITIAL_SPEED = 0.0
+    ROCKET_ACCELERATION = 0.3
+    ROCKET_STOWED_OFFSET_X_LEFT = 18
+    ROCKET_STOWED_OFFSET_X_RIGHT = 48
+    ROCKET_STOWED_OFFSET_Y = 32
+    ROCKET_FLAME_SIZE = 12
+    ROCKET_HORIZONTAL_SPEED_DELTA = 6  # The lower - the closer the rocket horizontal speed to the spaceship's one
 
     STAR_NUM_SMALL = 60
     STAR_NUM_BRIGHT = 20

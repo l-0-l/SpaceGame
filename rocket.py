@@ -7,58 +7,64 @@ from interstellar import Interstellar
 import pygame
 
 
-class Missile(Interstellar):
-    def __init__(self, spaceship, side, enemies, game):
-        super().__init__(Resources.missile, speed=0, x=0, y=0)
+class Rocket(Interstellar):
+    def __init__(self, spaceship, side):
+        super().__init__(Resources.rocket, speed=0, x=0, y=0)
         self.spaceship = spaceship
-        self.speed = (0, Const.MISSILE_INITIAL_SPEED)
+        self.speed = (0, Const.ROCKET_INITIAL_SPEED)
         self.width, self.height = self.images[0].get_rect().size
-        self.hitsize = (0, 0, self.width, self.height - Const.MISSILE_FLAME_SIZE)
+        self.hitsize = (0, 0, self.width, self.height - Const.ROCKET_FLAME_SIZE)
         self.away = False
         self.next_frame = 0
         self.current_pic_num = 0
         self.on_board = True
         self.side = side
-        self.enemies = enemies
         self.launch_sound = Resources.wav_launch[0]
         self.x = 0
         self.y = 0
-        self.game = game
 
     def move(self):
         """
-        If the missile is on board, it will be moving with the spaceship
+        If the rocket is on board, it will be moving with the spaceship
         on the x axis, and when fired - it will move on the y axis as well
         """
-        if self.on_board:
-            # The missile is on board
+        if not self.is_launched():
+            # The rocket is on board
             self.x, self.y = self.spaceship.get_xy()
             if self.side == Direction.left:
-                self.x += Const.MISSILE_STOWED_OFFSET_X_LEFT
+                self.x += Const.ROCKET_STOWED_OFFSET_X_LEFT
             else:
-                self.x += Const.MISSILE_STOWED_OFFSET_X_RIGHT
-            self.y += Const.MISSILE_STOWED_OFFSET_Y
-            self.speed = (self.spaceship.get_horizontal_speed() / Const.MISSILE_HORIZONTAL_SPEED_DELTA, 0)
+                self.x += Const.ROCKET_STOWED_OFFSET_X_RIGHT
+            self.y += Const.ROCKET_STOWED_OFFSET_Y
+            self.speed = (self.spaceship.get_horizontal_speed() / Const.ROCKET_HORIZONTAL_SPEED_DELTA, 0)
         else:
-            # The missile is on its way to the target
+            # The rocket is on its way to the target
             if self.y > Const.OFF_THE_SCREEN_TOP:
-                self.speed = tuple(map(sum, zip((0, Const.MISSILE_ACCELERATION), self.speed)))
+                self.speed = tuple(map(sum, zip((0, Const.ROCKET_ACCELERATION), self.speed)))
                 self.y -= self.speed[1]
                 self.x += self.speed[0]
             else:
                 self.away = True
         super().move()
+        # If the rocket is gone from the screen (fly away or hit something), reload it
+        if self.is_away():
+            self.reload()
 
-        # Check if we collide into anything
-        for enemy in self.enemies.get_enemies():
-            if not self.on_board and pygame.Rect(self.hitbox).colliderect(enemy.hitbox):
-                self.away = True
-                enemy.hit()
-                self.game.add_score(enemy)
+    def is_launched(self):
+        """
+        Return true if the rocket is launched
+        """
+        return not self.on_board
+
+    def gone(self):
+        """
+        When the rocket hits something, it disappears
+        """
+        self.away = True
 
     def get_current_pic(self):
         """
-        Return the current missile image
+        Return the current rocket image
         """
         if self.on_board:
             # The picture is static, without flame
@@ -87,30 +93,30 @@ class Missile(Interstellar):
 
     def launch(self):
         """
-        Launch the missile - means detach it from the spaceship
+        Launch the rocket - means detach it from the spaceship
         """
         if self.on_board:
-            # Set the missile angle depending on direction
+            # Set the rocket angle depending on direction
             angle = -self.speed[0]*3
             if abs(angle) > 1:
                 self.images = []
                 for image in self.original_images:
-                    self.images.append(Missile.rotate(image, angle))
+                    self.images.append(Rocket.rotate(image, angle))
             self.on_board = False
             self.launch_sound.play()
 
     def reload(self):
         """
-        Reset the missile status, and attach it back to the spaceship
+        Reset the rocket status, and attach it back to the spaceship
         """
         self.on_board = True
         self.away = False
         self.images = self.original_images
-        self.speed = (0, Const.MISSILE_INITIAL_SPEED)
+        self.speed = (0, Const.ROCKET_INITIAL_SPEED)
 
     def draw(self):
         """
-        Draw the missile
+        Draw the rocket
         """
         self.spaceship.screen.window.blit(self.get_current_pic(), self.get_xy())
         if Const.DEBUG:

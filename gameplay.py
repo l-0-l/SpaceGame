@@ -1,7 +1,7 @@
 from level import Level
 from enemies import Enemies
 from spaceship import Spaceship
-from missile import Missile
+from rocket import Rocket
 from direction import Direction
 from const import Const
 from random import randint
@@ -20,14 +20,8 @@ class Gameplay:
         self.level_initialized = False
         self.spaceship = self.spaceship = Spaceship(x=Const.INITIAL_X_POS, y=Const.INITIAL_Y_POS, screen=self.screen)
         self.enemies = Enemies(self)
-        self.missile_left = Missile(spaceship=self.spaceship,
-                                    side=Direction.left,
-                                    enemies=self.enemies,
-                                    game=self)
-        self.missile_right = Missile(spaceship=self.spaceship,
-                                     side=Direction.right,
-                                     enemies=self.enemies,
-                                     game=self)
+        self.rocket_left = Rocket(spaceship=self.spaceship, side=Direction.left)
+        self.rocket_right = Rocket(spaceship=self.spaceship, side=Direction.right)
         self.player = Player(self.screen)
         self.invaders_in_place = False
         self.num_of_levels = 10
@@ -146,12 +140,24 @@ class Gameplay:
             self.invaders_in_place = False
             self.initialize_level()
 
-    def is_spaceship_hit(self):
+    def check_hits(self):
+        """
+        Check if a rocket or a spaceship hit something
+        """
         for enemy in self.enemies.get_enemies():
-            if pygame.Rect(enemy.hitbox).colliderect(self.spaceship.hitbox):
+            # Spaceship
+            if pygame.Rect(self.spaceship.hitbox).colliderect(enemy.hitbox):
                 if not enemy.is_hit():
                     enemy.hit()
-                self.spaceship.hit()
+                # TODO: Spaceship death
+                # self.spaceship.hit()
+            # Rocket
+            for rocket in [self.rocket_left, self.rocket_right]:
+                if rocket.is_launched():
+                    if pygame.Rect(rocket.hitbox).colliderect(enemy.hitbox):
+                        rocket.gone()
+                        enemy.hit()
+                        self.add_score(enemy)
 
     def run(self):
         """
@@ -169,18 +175,14 @@ class Gameplay:
         # Move all enemies
         self.enemies.move()
 
-        # Spaceship
+        # Spaceship and rockets
         # Calculate the next locations of everything
         self.spaceship.move()
-        self.missile_left.move()
-        self.missile_right.move()
+        self.rocket_left.move()
+        self.rocket_right.move()
 
-        # Missiles
-        # A bit of missile logic - reloading when off the screen
-        if self.missile_left.is_away():
-            self.missile_left.reload()
-        if self.missile_right.is_away():
-            self.missile_right.reload()
+        # Check if something was hit
+        self.check_hits()
 
         # Game
         if self.end_level():
@@ -203,9 +205,9 @@ class Gameplay:
                 if event.key == pygame.K_RIGHT:
                     self.spaceship.set_direction(Direction.right)
                 if event.key == pygame.K_z:
-                    self.missile_left.launch()
+                    self.rocket_left.launch()
                 if event.key == pygame.K_x:
-                    self.missile_right.launch()
+                    self.rocket_right.launch()
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
                     # Check if a direction change is relevant
@@ -223,8 +225,8 @@ class Gameplay:
         self.screen.draw()
         self.enemies.draw()
         self.player.draw()
-        self.missile_left.draw()
-        self.missile_right.draw()
+        self.rocket_left.draw()
+        self.rocket_right.draw()
         self.spaceship.draw()
 
         if clock() < self.notification_time:

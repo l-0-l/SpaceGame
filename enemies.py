@@ -11,7 +11,7 @@ class Enemies:
     """
     Two types of enemies in this game:
         * Asteroids are random and annoying, but sometimes when you're lucky
-          they help blow up more than one invader with a single missile
+          they help blow up more than one invader with a single rocket
         * Invaders are the ugly enemies from outer space, destroy them or be
           destroyed
     """

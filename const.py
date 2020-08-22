@@ -74,4 +74,4 @@ class Const:
     PLAYER_LIVES_POSITION = (10, 10)
     PLAYER_SCORE_POSITION = (10, 40)
 
-    DEBUG = True
+    DEBUG = False

@@ -278,16 +278,16 @@ class Gameplay:
                 self.first_blink = False
                 self.blinking_time = clock() + Const.BLINKING_TIME
             if not self.blink:
-                self.spaceship.draw()
                 self.rocket_left.draw()
                 self.rocket_right.draw()
+                self.spaceship.draw()
         else:
             if self.spaceship_state == self.SpaceshipState.blinking:
                 self.spaceship_state = self.SpaceshipState.normal
-            self.spaceship.draw()
             if self.spaceship_state != self.SpaceshipState.hit:
                 self.rocket_left.draw()
                 self.rocket_right.draw()
+            self.spaceship.draw()
 
         if clock() < self.notification_time:
             label = ""

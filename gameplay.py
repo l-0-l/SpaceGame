@@ -18,10 +18,11 @@ class Gameplay:
         self.levels = []
         self.screen = screen
         self.level_initialized = False
-        self.spaceship = self.spaceship = Spaceship(x=Const.INITIAL_X_POS, y=Const.INITIAL_Y_POS, screen=self.screen)
+        self.spaceship = Spaceship(x=Const.INITIAL_X_POS, y=Const.INITIAL_Y_POS, screen=self.screen)
         self.enemies = Enemies(self)
         self.rocket_left = Rocket(spaceship=self.spaceship, side=Direction.left)
         self.rocket_right = Rocket(spaceship=self.spaceship, side=Direction.right)
+        self.rockets = [self.rocket_left, self.rocket_right]
         self.player = Player(self.screen)
         self.invaders_in_place = False
         self.num_of_levels = 10
@@ -177,24 +178,25 @@ class Gameplay:
                 # Spaceship death. It can be hit by an exploding enemy as well.
                 self.spaceship_was_hit()
             # Rocket
-            for rocket in [self.rocket_left, self.rocket_right]:
+            for rocket in self.rockets:
                 if rocket.is_launched():
                     if pygame.Rect(rocket.hitbox).colliderect(enemy.hitbox):
                         rocket.gone()
                         enemy.hit()
                         self.add_score(enemy)
 
-    def spaceship_state_machine(self):
-        if self.spaceship_state == self.SpaceshipState.hit and not self.spaceship.is_hit():
-            # The spaceship was indeed hit, but it isn't exploding yet
-            self.spaceship_state = self.SpaceshipState.blinking
-            self.spaceship.restore_xy()
-            self.spaceship.reinitialize()
-            self.blinking_period = clock() + Const.BLINKING_PERIOD
-            self.blinking_time = clock() + Const.BLINKING_PERIOD / 3
-            # The first blink will be longer, i.e. the spaceship will disappear for a while after explosion
-            self.first_blink = True
-            self.blink = True
+    def spaceship_post_explosion(self):
+        """
+        This is what happens to the spaceship after it explodes
+        """
+        self.spaceship_state = self.SpaceshipState.blinking
+        # Since during the explosion some basic parameters are changed, need to reinitialize
+        self.spaceship.reinitialize()
+        self.blinking_period = clock() + Const.BLINKING_PERIOD
+        self.blinking_time = clock() + Const.BLINKING_PERIOD / 3  # Just some longer outage for the first blink
+        # The first blink will be longer, i.e. the spaceship will disappear for a while after explosion
+        self.first_blink = True
+        self.blink = True
 
     def run(self):
         """
@@ -220,7 +222,9 @@ class Gameplay:
 
         # Check if something was hit
         self.check_hits()
-        self.spaceship_state_machine()
+        if self.spaceship_state == self.SpaceshipState.hit and not self.spaceship.is_hit():
+            # The spaceship was hit and finished exploding
+            self.spaceship_post_explosion()
 
         # Game
         if self.end_level():
@@ -268,27 +272,41 @@ class Gameplay:
         self.screen.draw()
         self.enemies.draw()
         self.player.draw()
-        for rocket in [self.rocket_left, self.rocket_right]:
+
+        # If any rocket has been launched, it is fully independent from
+        # the spaceship, and therefore will be drawn unrelated from its state.
+        for rocket in self.rockets:
             if rocket.is_launched():
                 rocket.draw()
 
+        # After an explosion of the spaceship, and reducing of one life, the spaceship
+        # will not appear for a while, and then appear blinking for few seconds.
         if clock() < self.blinking_period:
+            # Spaceship blinking was required
             if clock() > self.blinking_time:
+                # Blinking duty cycle finished, switch the blink state
                 self.blink = not self.blink
                 self.first_blink = False
                 self.blinking_time = clock() + Const.BLINKING_TIME
             if not self.blink:
+                # Only if the current blink state is False, draw the spaceship
                 self.rocket_left.draw()
                 self.rocket_right.draw()
                 self.spaceship.draw()
         else:
+            # Spaceship blinking is not required or finished
             if self.spaceship_state == self.SpaceshipState.blinking:
+                # Spaceship blinking has just finished
                 self.spaceship_state = self.SpaceshipState.normal
             if self.spaceship_state != self.SpaceshipState.hit:
-                self.rocket_left.draw()
-                self.rocket_right.draw()
+                # Draw the rockets only if the spaceship is not currently exploding
+                for rocket in self.rockets:
+                    if not rocket.is_launched():
+                        # But not if the rockets have been launched - this was already handled above
+                        rocket.draw()
             self.spaceship.draw()
 
+        # Handle the notifications
         if clock() < self.notification_time:
             label = ""
             if self.level_notification:

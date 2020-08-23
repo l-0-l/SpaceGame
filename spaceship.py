@@ -36,6 +36,11 @@ class Spaceship(Interstellar):
         self.saved_y = 0
 
     def reinitialize(self):
+        """
+        After the ship has been hit, we need to reinitialize it,
+        since the parent's hit method changes its basic parameters.
+        """
+        self.x, self.y = self.saved_x, self.saved_y
         self.current_acceleration = 0
         self.current_speed = 0
         self.width, self.height = Resources.ship_move_right[0].get_rect().size
@@ -153,12 +158,6 @@ class Spaceship(Interstellar):
         """
         return self.x, self.y
 
-    def restore_xy(self):
-        """
-        Restore the spaceship position to a previously saved one
-        """
-        self.x, self.y = self.saved_x, self.saved_y
-
     def get_horizontal_speed(self):
         """
         Return the current speed
@@ -169,7 +168,10 @@ class Spaceship(Interstellar):
         """
         Save the position before calling the parent hit function
         """
+        # The position save is required to return the ship after an explosion to the same place it exploded on
         self.saved_x, self.saved_y = self.get_xy()
+        # The parent's hit method will change some of the basic object's parameters,
+        # and it will have to be reinitialized afterwards.
         super().hit()
 
     def draw(self):
@@ -178,6 +180,7 @@ class Spaceship(Interstellar):
         """
         self.screen.window.blit(self.get_current_pic(), self.get_xy())
         if not self.exploding:
+            # In case the spaceship is exploding, no need to show the flames
             self.screen.window.blit(self.get_current_flame_pic(),
                                     (self.x + Const.SPACESHIP_FLAME_OFFSET_X_LEFT,
                                      self.y + Const.SPACESHIP_FLAME_OFFSET_Y))

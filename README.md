@@ -9,11 +9,11 @@ suggest you use PyCharm - the project files are there as well.
 
 To run, normally you'd type "python space.py", or run from within PyCharm or other IDE.
 
-Controls:
-    [Left]  - Go left
-    [Right] - Go right
-    [z]     - Fire the left rocket
-    [x]     - Fire the right rocket
+Controls:\
+&nbsp;&nbsp;&nbsp;&nbsp;[Left]  - Go left\
+&nbsp;&nbsp;&nbsp;&nbsp;[Right] - Go right\
+&nbsp;&nbsp;&nbsp;&nbsp;[z]     - Fire the left rocket\
+&nbsp;&nbsp;&nbsp;&nbsp;[x]     - Fire the right rocket\
 
 Enjoy :)
 

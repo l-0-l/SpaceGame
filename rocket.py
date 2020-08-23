@@ -4,6 +4,7 @@ from direction import Direction
 from resources import Resources
 from const import Const
 from interstellar import Interstellar
+from utils import Utils
 import pygame
 
 
@@ -79,18 +80,6 @@ class Rocket(Interstellar):
                 self.next_frame = clock() + Const.FRAME_TIME_SEC
         return self.images[self.current_pic_num]
 
-    @staticmethod
-    def rotate(image, angle):
-        """
-        Rotate an image while keeping its center and size
-        """
-        orig_rect = image.get_rect()
-        rot_image = pygame.transform.rotate(image, angle)
-        rot_rect = orig_rect.copy()
-        rot_rect.center = rot_image.get_rect().center
-        rot_image = rot_image.subsurface(rot_rect).copy()
-        return rot_image
-
     def launch(self):
         """
         Launch the rocket - means detach it from the spaceship
@@ -101,7 +90,7 @@ class Rocket(Interstellar):
             if abs(angle) > 1:
                 self.images = []
                 for image in self.original_images:
-                    self.images.append(Rocket.rotate(image, angle))
+                    self.images.append(Utils.rotate(image, angle))
             self.on_board = False
             self.launch_sound.play()
 

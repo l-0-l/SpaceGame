@@ -50,7 +50,7 @@ class Interstellar:
         """
         Move the hitbox, if exists
         """
-        # Move the hitbox only if the hit size is > 0
+        # Move the hitbox only if the hit width is > 0, otherwise it isn't a hittable object
         if self.hitsize[2] != 0:
             self.hitbox = tuple(map(sum, zip((self.x, self.y, -self.hitsize[0], -self.hitsize[1]), self.hitsize)))
 
@@ -96,7 +96,7 @@ class Interstellar:
 
     def off_the_screen(self):
         """
-        Return true if the asteroid has vanished from the screen
+        Return true if the object has vanished from the screen
         """
         if not self.allow_off_the_screen and \
                 (self.x > Const.OFF_THE_SCREEN_RIGHT or self.y > Const.OFF_THE_SCREEN_BOTTOM or

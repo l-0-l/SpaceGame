@@ -15,19 +15,31 @@ class Spaceship(Interstellar):
     __instance = None
 
     def __init__(self, x, y, screen):
-        super().__init__(None, speed=0, x=0, y=0)
+        super().__init__(images=None,
+                         speed=0,
+                         explode_images=Resources.explosion,
+                         explode_sounds=Resources.wav_explosion,
+                         x=0, y=0)
         if Spaceship.__instance:
             raise Exception("Only one spaceship!")
         else:
             Spaceship.__instance = self
         self.current_acceleration = 0
         self.current_speed = 0
-        self.screen = screen
         self.width, self.height = Resources.ship_move_right[0].get_rect().size
         self.hitsize = tuple(map(sum, zip((0, 0, self.width, self.height, 0, 0), Const.SPACESHIP_HITSIZE)))
         self.x = x - self.width/2   # Center of the pic
         self.y = y - self.height/2  # Center of the pic
-        self.next_frame = 0
+        self.current_flame_pic_num = 0
+        self.screen = screen
+        self.saved_x = 0
+        self.saved_y = 0
+
+    def reinitialize(self):
+        self.current_acceleration = 0
+        self.current_speed = 0
+        self.width, self.height = Resources.ship_move_right[0].get_rect().size
+        self.hitsize = tuple(map(sum, zip((0, 0, self.width, self.height, 0, 0), Const.SPACESHIP_HITSIZE)))
         self.current_flame_pic_num = 0
 
     def set_direction(self, direction):
@@ -89,28 +101,38 @@ class Spaceship(Interstellar):
         """
         Return the current spaceship image
         """
-        # The current picture is determined by the spaceship speed
-        num_pic = abs(round(self.current_speed / Const.SPACESHIP_ANIMATION_TO_SPEED_RATIO))
-        total_pics = len(Resources.ship_move_right) - 1
+        if not self.exploding:
+            # The current picture is determined by the spaceship speed
+            num_pic = abs(round(self.current_speed / Const.SPACESHIP_ANIMATION_TO_SPEED_RATIO))
+            total_pics = len(Resources.ship_move_right) - 1
 
-        # The number of the picture can't be more than the pictures we have
-        if num_pic >= total_pics:
-            num_pic = total_pics
+            # The number of the picture can't be more than the pictures we have
+            if num_pic >= total_pics:
+                num_pic = total_pics
 
-        # Here the direction is the actual moving direction, rather than the direction
-        # the user wants the spaceship to move as returned by self.get_direction method.
-        direction = copysign(1, self.current_speed)
+            # Here the direction is the actual moving direction, rather than the direction
+            # the user wants the spaceship to move as returned by self.get_direction method.
+            direction = copysign(1, self.current_speed)
 
-        # Now we select the actual picture from the lists
-        if direction == Direction.right.value:
-            # Going right
-            pic = Resources.ship_move_right[num_pic]
-        elif direction == Direction.left.value:
-            # Going left
-            pic = Resources.ship_move_left[num_pic]
+            # Now we select the actual picture from the lists
+            if direction == Direction.right.value:
+                # Going right
+                pic = Resources.ship_move_right[num_pic]
+            elif direction == Direction.left.value:
+                # Going left
+                pic = Resources.ship_move_left[num_pic]
+            else:
+                # Not moving
+                pic = Resources.ship_move_right[0]
         else:
-            # Not moving
-            pic = Resources.ship_move_right[0]
+            if clock() > self.next_frame:
+                if self.frame_num < self.num_of_explosion_frames:
+                    self.frame_num += 1
+                else:
+                    self.away = True
+                    self.exploding = False
+                self.next_frame = clock() + self.frame_time
+            pic = self.current_image_set[self.frame_num]
         return pic
 
     def get_current_flame_pic(self):
@@ -131,22 +153,36 @@ class Spaceship(Interstellar):
         """
         return self.x, self.y
 
+    def restore_xy(self):
+        """
+        Restore the spaceship position to a previously saved one
+        """
+        self.x, self.y = self.saved_x, self.saved_y
+
     def get_horizontal_speed(self):
         """
         Return the current speed
         """
         return self.current_speed
 
+    def hit(self):
+        """
+        Save the position before calling the parent hit function
+        """
+        self.saved_x, self.saved_y = self.get_xy()
+        super().hit()
+
     def draw(self):
         """
         Draw itself together with the flames
         """
         self.screen.window.blit(self.get_current_pic(), self.get_xy())
-        self.screen.window.blit(self.get_current_flame_pic(),
-                                (self.x + Const.SPACESHIP_FLAME_OFFSET_X_LEFT,
-                                 self.y + Const.SPACESHIP_FLAME_OFFSET_Y))
-        self.screen.window.blit(self.get_current_flame_pic(),
-                                (self.x + Const.SPACESHIP_FLAME_OFFSET_X_RIGHT,
-                                 self.y + Const.SPACESHIP_FLAME_OFFSET_Y))
+        if not self.exploding:
+            self.screen.window.blit(self.get_current_flame_pic(),
+                                    (self.x + Const.SPACESHIP_FLAME_OFFSET_X_LEFT,
+                                     self.y + Const.SPACESHIP_FLAME_OFFSET_Y))
+            self.screen.window.blit(self.get_current_flame_pic(),
+                                    (self.x + Const.SPACESHIP_FLAME_OFFSET_X_RIGHT,
+                                     self.y + Const.SPACESHIP_FLAME_OFFSET_Y))
         if Const.DEBUG:
             draw.rect(self.screen.window, (255, 0, 0), self.hitbox, 1)

@@ -12,8 +12,8 @@ import enum
 
 
 class Gameplay:
-    def __init__(self, game, screen):
-        self.game = game
+    def __init__(self, space, screen):
+        self.space = space
         self.level = 0
         self.levels = []
         self.screen = screen
@@ -29,6 +29,13 @@ class Gameplay:
         self.initialize_level()
         self.level_font = pygame.font.Font("res/PixelEmulator-xq08.ttf", 24)
         self.notification_time = 0
+        self.blinking_period = 0
+        self.blinking_time = 0
+        self.blink = False
+        self.first_blink = False
+        self.level_notification = False
+        self.death_notification = False
+        self.spaceship_state = self.SpaceshipState.normal
 
     class Probability(enum.Enum):
         very_low = 100
@@ -36,6 +43,11 @@ class Gameplay:
         medium = 60
         high = 40
         very_high = 20
+
+    class SpaceshipState(enum.Enum):
+        normal = 0
+        hit = 1
+        blinking = 2
 
     def __setup_levels(self):
         """
@@ -91,7 +103,7 @@ class Gameplay:
             shift = (line % 2) * nominal_shift
             for column in range(columns):
                 invaders_locations.append((initial_shift + Const.INVADER_SIZE * 1.7 * column + shift,
-                                          -Const.INVADER_SIZE - Const.INVADER_SIZE * 1.2 * line))
+                                           -Const.INVADER_SIZE - Const.INVADER_SIZE * 1.2 * line))
         return invaders_locations
 
     def current_level(self):
@@ -113,7 +125,7 @@ class Gameplay:
         """
         if self.level == self.num_of_levels:
             # TODO: this is a very sad ending...
-            exit(0)
+            self.space.quit()
         if not self.level_initialized:
             self.level_initialized = True
             self.invaders_in_place = False
@@ -121,7 +133,8 @@ class Gameplay:
             self.enemies.add_invader(x=invader_location[0],
                                      y=invader_location[1],
                                      speed=1)
-        self.notification_time = clock() + 3
+        self.level_notification = True
+        self.notification_time = clock() + Const.NOTIFICATION_TIME
 
     def end_level(self):
         """
@@ -140,17 +153,29 @@ class Gameplay:
             self.invaders_in_place = False
             self.initialize_level()
 
+    def spaceship_was_hit(self):
+        self.spaceship.hit()
+        self.death_notification = True
+        self.notification_time = clock() + Const.NOTIFICATION_TIME
+        self.player.hit()
+        self.spaceship_state = self.SpaceshipState.hit
+        if self.player.get_lives() == 0:
+            # The game will end when there are 0 lives left
+            # TODO: this is a very sad ending...
+            self.space.quit()
+
     def check_hits(self):
         """
         Check if a rocket or a spaceship hit something
         """
         for enemy in self.enemies.get_enemies():
             # Spaceship
-            if pygame.Rect(self.spaceship.hitbox).colliderect(enemy.hitbox):
+            if self.spaceship_state == self.SpaceshipState.normal and \
+                    pygame.Rect(self.spaceship.hitbox).colliderect(enemy.hitbox):
                 if not enemy.is_hit():
                     enemy.hit()
-                # TODO: Spaceship death
-                # self.spaceship.hit()
+                # Spaceship death. It can be hit by an exploding enemy as well.
+                self.spaceship_was_hit()
             # Rocket
             for rocket in [self.rocket_left, self.rocket_right]:
                 if rocket.is_launched():
@@ -158,6 +183,18 @@ class Gameplay:
                         rocket.gone()
                         enemy.hit()
                         self.add_score(enemy)
+
+    def spaceship_state_machine(self):
+        if self.spaceship_state == self.SpaceshipState.hit and not self.spaceship.is_hit():
+            # The spaceship was indeed hit, but it isn't exploding yet
+            self.spaceship_state = self.SpaceshipState.blinking
+            self.spaceship.restore_xy()
+            self.spaceship.reinitialize()
+            self.blinking_period = clock() + Const.BLINKING_PERIOD
+            self.blinking_time = clock() + Const.BLINKING_PERIOD / 3
+            # The first blink will be longer, i.e. the spaceship will disappear for a while after explosion
+            self.first_blink = True
+            self.blink = True
 
     def run(self):
         """
@@ -183,6 +220,7 @@ class Gameplay:
 
         # Check if something was hit
         self.check_hits()
+        self.spaceship_state_machine()
 
         # Game
         if self.end_level():
@@ -195,19 +233,24 @@ class Gameplay:
         for event in pygame.event.get():
             # Exit event
             if event.type == pygame.QUIT:
-                self.game.quit()
+                self.space.quit()
             # Respond to keys
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    self.game.quit()
-                if event.key == pygame.K_LEFT:
-                    self.spaceship.set_direction(Direction.left)
-                if event.key == pygame.K_RIGHT:
-                    self.spaceship.set_direction(Direction.right)
-                if event.key == pygame.K_z:
-                    self.rocket_left.launch()
-                if event.key == pygame.K_x:
-                    self.rocket_right.launch()
+                    self.space.quit()
+                if self.spaceship_state == self.SpaceshipState.normal:
+                    # In any of the abnormal spaceship states, do not allow firing the rockets
+                    if event.key == pygame.K_z:
+                        self.rocket_left.launch()
+                    if event.key == pygame.K_x:
+                        self.rocket_right.launch()
+                if self.spaceship_state != self.SpaceshipState.hit and not self.first_blink:
+                    # Allow movement of the spaceship if it is normal or blinking, but not if it is exploding
+                    # Also, don't allow moving the ship during the first, long blink
+                    if event.key == pygame.K_LEFT:
+                        self.spaceship.set_direction(Direction.left)
+                    if event.key == pygame.K_RIGHT:
+                        self.spaceship.set_direction(Direction.right)
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
                     # Check if a direction change is relevant
@@ -220,20 +263,44 @@ class Gameplay:
 
     def draw(self):
         """
-        Draw everything, including static player-related data
+        Draw everything, including static player-related data and notifications
         """
         self.screen.draw()
         self.enemies.draw()
         self.player.draw()
-        self.rocket_left.draw()
-        self.rocket_right.draw()
-        self.spaceship.draw()
+        for rocket in [self.rocket_left, self.rocket_right]:
+            if rocket.is_launched():
+                rocket.draw()
+
+        if clock() < self.blinking_period:
+            if clock() > self.blinking_time:
+                self.blink = not self.blink
+                self.first_blink = False
+                self.blinking_time = clock() + Const.BLINKING_TIME
+            if not self.blink:
+                self.spaceship.draw()
+                self.rocket_left.draw()
+                self.rocket_right.draw()
+        else:
+            if self.spaceship_state == self.SpaceshipState.blinking:
+                self.spaceship_state = self.SpaceshipState.normal
+            self.spaceship.draw()
+            if self.spaceship_state != self.SpaceshipState.hit:
+                self.rocket_left.draw()
+                self.rocket_right.draw()
 
         if clock() < self.notification_time:
-            level = self.player.font.render("Level " + str(self.level + 1), True, (255, 255, 255))
-            width, height = level.get_rect().size
-            level = pygame.transform.scale(level, (width * 4, height * 4))
-            width, height = level.get_rect().size
+            label = ""
+            if self.level_notification:
+                label = self.player.font.render("Level " + str(self.level + 1), True, Const.COLOR_WHITE)
+            elif self.death_notification:
+                label = self.player.font.render("Lives:" + str(self.player.get_lives()), True, Const.COLOR_RED)
+            width, height = label.get_rect().size
+            label = pygame.transform.scale(label, (width * 4, height * 4))
+            width, height = label.get_rect().size
             x = (Const.SCREEN_WIDTH - width) / 2
             y = (Const.SCREEN_HEIGHT - height) / 2
-            self.screen.window.blit(level, (x, y))
+            self.screen.window.blit(label, (x, y))
+        else:
+            self.level_notification = False
+            self.death_notification = False

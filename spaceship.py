@@ -1,6 +1,6 @@
 from math import copysign
 from direction import Direction
-from time import clock
+from time import perf_counter as clock
 from random import randint
 from resources import Resources
 from const import Const

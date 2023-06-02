@@ -1,5 +1,5 @@
 from enemy import Enemy
-from time import clock
+from time import perf_counter as clock
 from const import Const
 
 

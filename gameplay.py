@@ -6,7 +6,7 @@ from direction import Direction
 from const import Const
 from random import randint
 from player import Player
-from time import clock
+from time import perf_counter as clock
 import pygame
 import enum
 

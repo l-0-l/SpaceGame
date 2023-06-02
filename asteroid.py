@@ -2,7 +2,7 @@ from math import copysign
 from random import randint
 from const import Const
 from enemy import Enemy
-from time import clock
+from time import perf_counter as clock
 
 
 class Asteroid(Enemy):

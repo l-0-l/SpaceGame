@@ -1,4 +1,4 @@
-from time import clock
+from time import perf_counter as clock
 from random import randint
 from direction import Direction
 from resources import Resources
